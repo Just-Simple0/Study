@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="light" name="color-scheme"/><title>제3회 모의고사 · 기출 유사 · 알고리즘2</title><link href="style.css" rel="stylesheet"/></head><body>
+<a class="skip" href="#main">본문으로 건너뛰기</a><nav aria-label="문서 이동" class="top"><a href="../학습실/index.html">a₂ · 학습실로</a><a href="index.html">모의고사 목록</a></nav><main class="" id="main"><header><p class="eyebrow">ALGORITHMS 2 / PRACTICE 03</p><h1>제3회 모의고사 · 기출 유사</h1><div class="statline"><span><strong>60분</strong></span><span>17문항</span><span>100점</span><span>코드 빈칸 8문항</span></div><div class="name-line"><span>이름 __________________</span><span>풀이 날짜 __________________</span></div></header><ul>
+<li>제한 시간은 60분, 17개 대문항·100점이다. 5점 문항 14개와 10점 문항 3개로 구성했다.</li>
+<li>답은 한국어로 작성해도 된다. 코드도 의미가 같은 의사코드를 인정한다. 영어 용어를 함께 적는 것은 선택이다.</li>
+<li>코드의 ①·② 등은 해당 소문항의 빈칸이다. 식을 요구하는 칸은 식으로, 조건을 요구하는 칸은 조건식으로 답한다. 나머지 코드는 주어진 대로 동작한다.</li>
+<li>배열 인덱스는 0부터 시작한다. 구간의 포함 범위·동률 처리·빈 입력 조건은 각 문항의 설명을 따른다.</li>
+<li>계산기 사용 여부는 실제 공지 기준을 따른다. 이번 공지는 공학용 계산기를 허용한다.</li>
+<li>학습실이나 해설을 보지 않고 먼저 풀어 본다. 정답·해설은 별도 파일에 있다.</li>
+</ul>
+<section class="q" data-number="1" data-points="5" id="q1"><h2><span>1. P와 NP</span><span class="score">5점</span></h2><div class="qbody"><p>다음은 결정 문제의 계산 복잡도에 관한 질문이다.</p>
+<p>① [2점] NP의 정의에서 “다항 시간”은 무엇을 할 수 있는 시간을 뜻하는가?</p>
+<p>② [2점] 항상 성립하는 포함 관계를 P와 NP로 쓰시오.</p>
+<p>③ [1점] P=NP는 현재 증명되어 있는가?</p>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="2" data-points="5" id="q2"><h2><span>2. 재귀 호출과 이중 반복</span><span class="score">5점</span></h2><div class="qbody"><p>n은 2의 거듭제곱이다. 아래 코드에서</p>
+<p>① [2점] a,b,k를 쓰고,</p>
+<p>② [3점] 가장 타이트한 Θ 시간 복잡도를 쓰시오.
+제공 공식: T(n)=aT(n/b)+Θ(nᵏ)에서 a=bᵏ이면 Θ(nᵏlog n), a&lt;bᵏ이면 Θ(nᵏ), a&gt;bᵏ이면 Θ(n^(log_b a))이다.</p>
+<pre><code class="language-python">def solve(n):
+    if n == 1: return
+    for branch in range(3):
+        solve(n//2)
+    for i in range(n):
+        for j in range(n):
+            perform_one_constant_time_operation()
+</code></pre>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="3" data-points="5" id="q3"><h2><span>3. 미래의 최적값</span><span class="score">5점</span></h2><div class="qbody"><p>TRIANGLEPATH의 D[y][x]는 (y,x)에서 시작해 마지막 행까지 내려가며 얻는 최대 합이다.</p>
+<p>① [3점] 현재 선택 뒤의 부분문제를 최적으로 풀어 전체 최적해를 구성할 수 있는 성질의 이름을 쓰시오.</p>
+<p>② [2점] 이 상태에 꼭대기에서 (y,x)까지 이미 지나온 합을 넣지 않아도 되는 이유를 쓰시오.</p>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="4" data-points="5" id="q4"><h2><span>4. 선수 선택 과정</span><span class="score">5점</span></h2><div class="qbody"><p>상대 출전 순서는 [7,4,10,6,9], 우리 레이팅은 [3,5,7,8,10]이다. 동점이면 우리 승리이다. 이길 수 있으면 이기는 가장 약한 선수, 없으면 남은 가장 약한 선수를 낸다.</p>
+<p>① [3점] 우리 선수가 나가는 레이팅을 순서대로 쓰시오.</p>
+<p>② [2점] 이 전략으로 얻는 최대 승리 수를 쓰시오.</p>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="5" data-points="5" id="q5"><h2><span>5. 캐시와 모듈러</span><span class="score">5점</span></h2><div class="qbody"><p>도미노만 허용하는 TILING2에서 빈 판의 답은 1이다. n은 0..100이다.</p>
+<p>① [2점] 계산 완료 여부 조건,</p>
+<p>② [2점] 점화식의 합을 채우시오.</p>
+<p>③ [1점] 매우 큰 n에서 매 단계 나머지를 저장하면 큰 정수 연산 비용 측면에서 어떤 이점이 있는지 쓰시오.</p>
+<pre><code class="language-python">def tiling(n):
+    MOD = 1000000007
+    cache = [-1]*(n+1)
+    def f(k):
+        if k &lt;= 1: return 1
+        if <span class="codeblank">①＿＿＿＿</span>: return cache[k]
+        cache[k] = (<span class="codeblank">②＿＿＿＿</span>) % MOD
+        return cache[k]
+    return f(n)
+</code></pre>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="6" data-points="5" id="q6"><h2><span>6. 읽기 위치를 반환하는 쿼드트리</span><span class="score">5점</span></h2><div class="qbody"><p>text는 유효한 쿼드트리 표현이다. 자식 순서는 왼쪽 위·오른쪽 위·왼쪽 아래·오른쪽 아래이다. flip(text,pos)는 pos에서 시작한 영역을 상하 반전한 문자열과 <strong>처리 직후의 다음 읽기 위치</strong>를 반환한다.</p>
+<p>① 재귀 시작 위치 [2점],</p>
+<p>② 네 부분 결합식 [3점]을 채우시오.</p>
+<pre><code class="language-python">def flip(text,pos):
+    head = text[pos]
+    pos += 1
+    if head in 'wb': return head,pos
+    child = []
+    for _ in range(4):
+        value,pos = flip(text,<span class="codeblank">①＿＿＿＿</span>)
+        child.append(value)
+    return 'x'+<span class="codeblank">②＿＿＿＿</span>,pos
+</code></pre>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="7" data-points="5" id="q7"><h2><span>7. 최대 연속 부분합</span><span class="score">5점</span></h2><div class="qbody"><p>빈 구간의 합 0을 정답 후보로 허용한다. cur은 이번 원소에서 끝나는 <strong>비어 있지 않은</strong> 연속 구간의 최대 합이다.</p>
+<p>① [2점] cur의 갱신식,</p>
+<p>② [2점] 전체 최댓값 갱신식을 채우고,</p>
+<p>③ [1점] 입력 [-5,-2,-7]의 반환값을 쓰시오.</p>
+<pre><code class="language-python">def maxsum(A):
+    cur, best = 0, 0
+    for x in A:
+        cur = <span class="codeblank">①＿＿＿＿</span>
+        best = <span class="codeblank">②＿＿＿＿</span>
+    return best
+</code></pre>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="8" data-points="5" id="q8"><h2><span>8. CLOCKSYNC 트리의 크기</span><span class="score">5점</span></h2><div class="qbody"><p>스위치 10개를 각각 0..3회 누르는 모든 선택을 재귀로 확인한다. 루트 깊이 0, 가지치기·메모 없음이며 각 함수 진입 시 전체 호출 수를 1 증가시킨다. 10개를 결정한 호출도 세고 반환한다.</p>
+<p>① [2점] 리프 수</p>
+<p>② [2점] 전체 호출 수</p>
+<p>③ [1점] 최대 깊이를 쓰시오. 큰 수를 십진수로 전개할 필요는 없다.</p>
+<p>제공 공식: Σ(k=0..d)bᵏ=(b^(d+1)−1)/(b−1).</p>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="9" data-points="5" id="q9"><h2><span>9. 빠른 LIS의 끝값 표</span><span class="score">5점</span></h2><div class="qbody"><p>수열 [3,5,6,2,4,1]을 왼쪽부터 읽는다. tails[k]는 지금까지 본 원소로 만들 수 있는 길이 k+1의 증가 부분수열 중 최소 끝값이다. 새 x는 tails에서 처음 x 이상인 값과 교체하고, 없으면 뒤에 붙인다.</p>
+<p>① [3점] 모든 원소를 읽은 tails와 LIS 길이를 쓰시오.</p>
+<p>② [2점] 최종 tails 자체가 이 입력의 부분수열인가? 원래 인덱스 순서로 이유를 쓰시오.</p>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="10" data-points="10" id="q10"><h2><span>10. 최장 길이와 k번째 복원</span><span class="score">10점</span></h2><div class="qbody"><p>S=[1,4,2,3,5,7,6]이다. 원소는 모두 다르며 사전순은 원소 값으로 비교한다.</p>
+<p>① [2점] LIS 길이</p>
+<p>② [2점] 사전순 두 번째 LIS의 원소 값을 쓰시오.</p>
+<p>③ [3점] 최장 수열을 이어갈 유효한 다음 후보의 조건,</p>
+<p>④ [3점] 한 분기를 건너뛴 뒤 skip 값을 채우시오. k는 유효한 1-based 순번이다. 가상 원소 −∞는 답에 포함하지 않는다.</p>
+<pre><code class="language-python">def kth_lis(S,k):
+    A = [float('-inf')]+S
+    n = len(A)
+    L, C = [1]*n, [0]*n
+    for i in range(n-1,-1,-1):
+        for j in range(i+1,n):
+            if A[i] &lt; A[j]: L[i] = max(L[i],L[j]+1)
+    def valid(i,j):
+        return <span class="codeblank">③＿＿＿＿</span>
+    for i in range(n-1,-1,-1):
+        if L[i] == 1: C[i] = 1
+        else:
+            C[i] = sum(C[j] for j in range(i+1,n) if valid(i,j))
+    i, skip, answer = 0, k-1, []
+    while L[i] &gt; 1:
+        candidates = sorted((A[j],j) for j in range(i+1,n) if valid(i,j))
+        for value,j in candidates:
+            if C[j] &lt;= skip:
+                skip = <span class="codeblank">④＿＿＿＿</span>
+            else:
+                answer.append(value)
+                i = j
+                break
+    return L[0]-1,C[0],answer
+</code></pre>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="11" data-points="5" id="q11"><h2><span>11. FENCE의 세 후보</span><span class="score">5점</span></h2><div class="qbody"><p>left,right는 양 끝을 포함한다. <code>largest_between(h,left,mid,right)</code>는 mid와 mid+1을 <strong>모두 포함하는</strong> 직사각형 중 최대 넓이를 반환하는 구현된 보조 함수이다. 판자 너비는 모두 1이다.</p>
+<p>① 오른쪽 재귀 시작점 [2점],</p>
+<p>② 전체 답 식 [3점]을 채우시오.</p>
+<pre><code class="language-python">def fence(h,left,right):
+    if left == right: return h[left]
+    mid = (left+right)//2
+    lmax = fence(h,left,mid)
+    rmax = fence(h,<span class="codeblank">①＿＿＿＿</span>,right)
+    cmax = largest_between(h,left,mid,right)
+    return <span class="codeblank">②＿＿＿＿</span>
+</code></pre>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="12" data-points="10" id="q12"><h2><span>12. Huffman의 비트와 읽기 위치</span><span class="score">10점</span></h2><div class="qbody"><p>그림은 A:2,B:3,C:7,D:9,E:14,F:19로 만든 Huffman 트리이다. 왼쪽=0, 오른쪽=1이다. Node의 char는 잎에서 문자, 내부 노드에서 None이며 left,right는 자식이다.</p>
+<figure><div class="diagram"><svg aria-labelledby="huffman3-title huffman3-desc" role="img" viewbox="0 0 680 456" xmlns="http://www.w3.org/2000/svg"><title id="huffman3-title">Huffman 이진 트리 · 왼쪽 간선 0, 오른쪽 간선 1</title><desc id="huffman3-desc">Huffman 이진 트리 · 왼쪽 간선 0, 오른쪽 간선 1</desc><rect fill="#fffdf8" height="100%" width="100%"></rect><g font-family="Noto Sans KR, sans-serif"><line stroke="#8b7c78" stroke-width="2.5" x1="230.0" x2="175" y1="318" y2="408"></line><text dominant-baseline="middle" fill="#773b4d" font-size="20" paint-order="stroke" stroke="#fffdf8" stroke-linejoin="round" stroke-width="8" text-anchor="middle" x="202.5" y="363.0">0</text><line stroke="#8b7c78" stroke-width="2.5" x1="230.0" x2="285" y1="318" y2="408"></line><text dominant-baseline="middle" fill="#773b4d" font-size="20" paint-order="stroke" stroke="#fffdf8" stroke-linejoin="round" stroke-width="8" text-anchor="middle" x="257.5" y="363.0">1</text><line stroke="#8b7c78" stroke-width="2.5" x1="312.5" x2="230.0" y1="228" y2="318"></line><text dominant-baseline="middle" fill="#773b4d" font-size="20" paint-order="stroke" stroke="#fffdf8" stroke-linejoin="round" stroke-width="8" text-anchor="middle" x="271.25" y="273.0">0</text><line stroke="#8b7c78" stroke-width="2.5" x1="312.5" x2="395" y1="228" y2="318"></line><text dominant-baseline="middle" fill="#773b4d" font-size="20" paint-order="stroke" stroke="#fffdf8" stroke-linejoin="round" stroke-width="8" text-anchor="middle" x="353.75" y="273.0">1</text><line stroke="#8b7c78" stroke-width="2.5" x1="188.75" x2="65" y1="138" y2="228"></line><text dominant-baseline="middle" fill="#773b4d" font-size="20" paint-order="stroke" stroke="#fffdf8" stroke-linejoin="round" stroke-width="8" text-anchor="middle" x="126.875" y="183.0">0</text><line stroke="#8b7c78" stroke-width="2.5" x1="188.75" x2="312.5" y1="138" y2="228"></line><text dominant-baseline="middle" fill="#773b4d" font-size="20" paint-order="stroke" stroke="#fffdf8" stroke-linejoin="round" stroke-width="8" text-anchor="middle" x="250.625" y="183.0">1</text><line stroke="#8b7c78" stroke-width="2.5" x1="560.0" x2="505" y1="138" y2="228"></line><text dominant-baseline="middle" fill="#773b4d" font-size="20" paint-order="stroke" stroke="#fffdf8" stroke-linejoin="round" stroke-width="8" text-anchor="middle" x="532.5" y="183.0">0</text><line stroke="#8b7c78" stroke-width="2.5" x1="560.0" x2="615" y1="138" y2="228"></line><text dominant-baseline="middle" fill="#773b4d" font-size="20" paint-order="stroke" stroke="#fffdf8" stroke-linejoin="round" stroke-width="8" text-anchor="middle" x="587.5" y="183.0">1</text><line stroke="#8b7c78" stroke-width="2.5" x1="374.375" x2="188.75" y1="48" y2="138"></line><text dominant-baseline="middle" fill="#773b4d" font-size="20" paint-order="stroke" stroke="#fffdf8" stroke-linejoin="round" stroke-width="8" text-anchor="middle" x="281.5625" y="93.0">0</text><line stroke="#8b7c78" stroke-width="2.5" x1="374.375" x2="560.0" y1="48" y2="138"></line><text dominant-baseline="middle" fill="#773b4d" font-size="20" paint-order="stroke" stroke="#fffdf8" stroke-linejoin="round" stroke-width="8" text-anchor="middle" x="467.1875" y="93.0">1</text><circle cx="65" cy="228" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="65" y="228">D</text><circle cx="175" cy="408" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="175" y="408">A</text><circle cx="285" cy="408" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="285" y="408">B</text><circle cx="230.0" cy="318" fill="#fffdf8" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="230.0" y="318">+</text><circle cx="395" cy="318" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="395" y="318">C</text><circle cx="312.5" cy="228" fill="#fffdf8" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="312.5" y="228">+</text><circle cx="188.75" cy="138" fill="#fffdf8" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="188.75" y="138">+</text><circle cx="505" cy="228" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="505" y="228">E</text><circle cx="615" cy="228" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="615" y="228">F</text><circle cx="560.0" cy="138" fill="#fffdf8" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="560.0" y="138">+</text><circle cx="374.375" cy="48" fill="#fffdf8" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="374.375" y="48">+</text></g></svg></div><figcaption>Huffman 이진 트리 · 왼쪽 간선 0, 오른쪽 간선 1 · <a href="assets/huffman3.svg" target="_blank">크게 보기</a></figcaption></figure>
+<p>① [2점] DEAF를 인코딩하시오.</p>
+<p>② [3점] 비트열 <code>11010101100</code>를 디코딩하시오.</p>
+<p>③ [2점] 잎을 출력한 뒤의 읽기 위치,</p>
+<p>④ [3점] 간선을 내려갈 때의 다음 읽기 위치를 채우시오. bits는 유효하고 완결되어 있다.</p>
+<pre><code class="language-python">def decode(root,bits):
+    result = []
+    def read(node,i):
+        if node.char is not None:
+            result.append(node.char)
+            if i == len(bits): return
+            return read(root,<span class="codeblank">③＿＿＿＿</span>)
+        if i == len(bits): raise ValueError('incomplete')
+        child = node.left if bits[i] == '0' else node.right
+        return read(child,<span class="codeblank">④＿＿＿＿</span>)
+    if bits: read(root,0)
+    return ''.join(result)
+</code></pre>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="13" data-points="5" id="q13"><h2><span>13. 한 행 이항계수</span><span class="score">5점</span></h2><div class="qbody"><p>0≤k≤n이다. 한 행으로 C(n,k)를 계산한다. range(start,stop,step)에서 stop은 포함되지 않는다.</p>
+<p>① 종료 경계 [2점],</p>
+<p>② 증가량 [2점]을 채우고,</p>
+<p>③ [1점] 그 방향으로 갱신하는 이유를 쓰시오.</p>
+<pre><code class="language-python">def choose(n,k):
+    dp = [0]*(k+1)
+    dp[0] = 1
+    for i in range(1,n+1):
+        for j in range(min(i,k),<span class="codeblank">①＿＿＿＿</span>,<span class="codeblank">②＿＿＿＿</span>):
+            dp[j] += dp[j-1]
+    return dp[k]
+</code></pre>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="14" data-points="5" id="q14"><h2><span>14. LAN의 거리 행렬</span><span class="score">5점</span></h2><div class="qbody"><p>coordinates는 각 건물의 (x,y)이고 existing은 이미 설치된 케이블의 양 끝 인덱스다. W에는 거리의 <strong>제곱</strong>을 저장한다. chosen에는 Prim이 최종 선택한 간선만 한 번씩 들어 있다.</p>
+<p>① 기존 간선 비용 [2점],</p>
+<p>② 선택 간선의 실제 길이 [3점]를 채우시오.</p>
+<pre><code class="language-python">from math import sqrt
+def weights(coordinates,existing):
+    n = len(coordinates)
+    W = [[0]*n for _ in range(n)]
+    for i,(x,y) in enumerate(coordinates):
+        for j,(a,b) in enumerate(coordinates):
+            W[i][j] = (x-a)**2+(y-b)**2
+    for u,v in existing:
+        W[u][v] = W[v][u] = <span class="codeblank">①＿＿＿＿</span>
+    return W
+def added_length(W,chosen):
+    return sum(<span class="codeblank">②＿＿＿＿</span> for u,v in chosen)
+</code></pre>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="15" data-points="5" id="q15"><h2><span>15. 최적 경로의 수</span><span class="score">5점</span></h2><div class="qbody"><p>아래 삼각형에서 바로 아래 또는 오른쪽 아래로 이동한다. <strong>지나간 좌표가 다르면 서로 다른 경로</strong>이며, 숫자열이 같아도 따로 센다.</p>
+<figure><div class="diagram"><svg aria-labelledby="triangle3-title triangle3-desc" role="img" viewbox="0 0 460 290" xmlns="http://www.w3.org/2000/svg"><title id="triangle3-title">삼각형 · 바로 아래 또는 오른쪽 아래로 이동</title><desc id="triangle3-desc">삼각형 · 바로 아래 또는 오른쪽 아래로 이동</desc><rect fill="#fffdf8" height="100%" width="100%"></rect><g font-family="Noto Sans KR, sans-serif"><circle cx="230.0" cy="40" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="230.0" y="40">4</text><circle cx="192.5" cy="105" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="192.5" y="105">2</text><circle cx="267.5" cy="105" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="267.5" y="105">2</text><circle cx="155.0" cy="170" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="155.0" y="170">1</text><circle cx="230.0" cy="170" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="230.0" y="170">3</text><circle cx="305.0" cy="170" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="305.0" y="170">1</text><circle cx="117.5" cy="235" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="117.5" y="235">2</text><circle cx="192.5" cy="235" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="192.5" y="235">1</text><circle cx="267.5" cy="235" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="267.5" y="235">1</text><circle cx="342.5" cy="235" fill="#f2e6df" r="22" stroke="#773b4d" stroke-width="2.5"></circle><text dominant-baseline="middle" fill="#342d30" font-size="21" text-anchor="middle" x="342.5" y="235">2</text></g></svg></div><figcaption>삼각형 · 바로 아래 또는 오른쪽 아래로 이동 · <a href="assets/triangle3.svg" target="_blank">크게 보기</a></figcaption></figure>
+<p>행별 값은 [4], [2,2], [1,3,1], [2,1,1,2]이다.</p>
+<p>① [3점] 최대 경로 합</p>
+<p>② [2점] 그 최대 합을 만드는 경로 수를 쓰시오.</p>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="16" data-points="5" id="q16"><h2><span>16. POLY 표의 한 칸</span><span class="score">5점</span></h2><div class="qbody"><p>P(n,f)는 전체 n칸, 첫 행 f칸인 모양 수이다. 다음 행 s칸과 붙이는 위치는 f+s−1개이고 아래 모양은 P(n−f,s)개이다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>s</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P(3,s)</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody>
+</table></div>
+<p>① [3점] 위 표로 P(5,2)를 계산하시오.</p>
+<p>② [2점] first=2, second=3인 두 행을 붙일 때 가능한 아래 행의 시작 위치를 쓰시오. 위 행의 칸은 x=0,1이고, 적어도 한 변이 맞닿아야 한다.</p>
+</div><div aria-hidden="true" class="answer-space"></div></section><section class="q" data-number="17" data-points="10" id="q17"><h2><span>17. 배낭의 최적값과 선택</span><span class="score">10점</span></h2><div class="qbody"><p>용량은 13이다. 물건은 각각 한 개이고 무게·가치는 아래와 같다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>물건</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+<th>D</th>
+<th>E</th>
+<th>F</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>무게</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+<td>2</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<td>가치</td>
+<td>8</td>
+<td>9</td>
+<td>13</td>
+<td>6</td>
+<td>14</td>
+<td>17</td>
+</tr>
+</tbody>
+</table></div>
+<p>① [3점] 분할 가능한 경우의 최대 가치(분수 허용)를 쓰시오.</p>
+<p>② [3점] 분할 불가능한 0-1 경우의 최대 가치를 쓰시오.</p>
+<p>③ [2점]</p>
+<p>②의 물건 목록을 쓰시오.</p>
+<p>④ [2점] 0-1 DP에서 현재 물건을 넣는 분기를 택한 뒤 “다음 물건 번호”와 “남은 용량”이 어떻게 바뀌는지 i,c,w[i]로 쓰시오.</p>
+</div><div aria-hidden="true" class="answer-space"></div></section><p class="end">수고하셨습니다. 총 17문항입니다.</p><footer>2026학년도 2학기 알고리즘2 중간고사 대비 · 자체 제작 학습 자료<br/>현재 공지·강의자료 및 2024 기출의 유형 구성을 참고했다. 실제 시험 문제·공식 해설이 아니다.</footer></main></body></html>

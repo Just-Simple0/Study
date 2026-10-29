@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>알고리즘2 · 시험 당일 압축요약</title><link href="../모의고사/style.css" rel="stylesheet"/><link href="시험당일_압축요약.css" rel="stylesheet"/></head><body>
+<a class="skip" href="#main">본문으로 건너뛰기</a><nav aria-label="문서 이동" class="top"><a href="index.html">a₂ · 학습실</a><a href="../모의고사/index.html">모의고사·기출</a><a href="알고리즘2_시험당일_압축요약_가로2단.pdf" rel="noopener" target="_blank">가로 2단 PDF</a><span class="source-reference">시험 공지 (배포본 미포함)</span></nav>
+<main id="main"><header class="cram-hero"><p class="eyebrow">ALGORITHMS 2 / LAST REVIEW</p><h1>알고리즘2 시험 당일 압축요약</h1>
+<p><strong>개념의 구분 → 상태·점화식 → 코드의 경계 조건.</strong> 처음 배우기 위한 전체 강의 노트는 학습실에 있고, 이 문서는 시험 직전 복습용이다.</p>
+<p>범위는 공지의 <strong>7주차까지(Lec.00–06)</strong>. 주관식 단답형·코드 채우기, 코드는 의사코드로 채점. <strong>10월 29일 11:00–12:00 / IT-5호관 245호</strong>. 공학용 계산기 외 전자기기는 사용하지 못한다.</p>
+<p><strong>10분 경로:</strong> SST → Master → QUADTREE → Huffman → Prim → 마지막 암기 목록. <strong>30분 경로:</strong> 여기에 DP 갱신 방향·배낭·LIS/KLIS·POLY를 더한다. 출제 예고가 전체 범위를 대체하지는 않는다.</p>
+<p>코드는 학습실 구현을 압축/선별한 설명용 구현이다. 원본 과제의 입출력 코드와 구분한다. PDF 쪽수는 표지 포함 실제 쪽수다. 중요한 영어 용어는 해당 개념 안에서 확인한다.</p>
+</header>
+<nav aria-label="압축요약 목차" class="cram-toc" id="contents"><a href="#ch0"><span>00</span> 문제 조건과 불변식</a><a href="#ch1"><span>01</span> 복잡도와 구간 문제</a><a href="#ch2"><span>02</span> 완전탐색과 상태 공간</a><a href="#ch3"><span>03</span> 분할정복과 재귀식</a><a href="#ch4"><span>04</span> 동적계획법의 기본</a><a href="#ch5"><span>05</span> 최적해 복원과 순번</a><a href="#ch6"><span>06</span> 탐욕법과 최소 신장 트리</a><a href="#last">마지막 암기 목록</a></nav>
+<div class="route"><strong>먼저 볼 출제 관련 항목</strong><div class="links"><a href="#sst">SST</a><a href="#master">Master</a><a href="#quad">QUADTREE</a><a href="#huffman">Huffman</a><a href="#prim">Prim</a></div></div>
+<section class="cram-chapter" id="ch0"><p class="eyebrow">LEC.00</p><h2 class="chapter-title">문제 조건과 불변식</h2><article class="cram-card" id="conditions"><h2>정답·종료·효율을 구분한다</h2><p class="source"><span class="source-reference">Lec.00 pp. 2–11 (배포본 미포함)</span> · <span class="source-reference">Lec.00 pp. 12–14 (배포본 미포함)</span> · <span class="source-reference">Lec.00 pp. 15–21 (배포본 미포함)</span> · <span class="source-reference">Lec.01 pp. 2–7 (배포본 미포함)</span> · <a href="index.html#lec01/correctness">학습실·모션 ↗</a></p><div class="qbody"><p><strong>Correctness(정확성)</strong>는 허용 입력 전체에서 원하는 답을 내는 성질이다. <strong>Finiteness(유한성)</strong>는 끝나는가, 효율성은 얼마나 많은 시간·공간을 쓰는가이다. 종료하면서 오답을 낼 수도 있다.</p>
+<p>알고리즘의 조건은 <strong>Input 0개 이상 / Output 1개 이상 / Finiteness / Definiteness(명확성) / Effectiveness(실행 가능성)</strong>이다. “열심히 생각한다”는 단계는 명확한 연산이 아니다.</p>
+<p>루프 불변식은 <strong>초기 성립 → 한 번 실행해도 유지 → 종료 때 정답 연결</strong> 순서로 쓴다.</p>
+<p><code>s += i</code> 직전은 <img alt="s=\frac{i(i-1)}{2}" class="math-inline" data-math="11261f0e4286b450d11f" src="assets/cram-math/11261f0e4286b450d11f.svg" style="width:4.00000em;height:1.75000em;vertical-align:-0.50000em"/>, 직후는 <img alt="s=\frac{i(i+1)}{2}" class="math-inline" data-math="b1fa28dfe880d3a8548f" src="assets/cram-math/b1fa28dfe880d3a8548f.svg" style="width:4.00000em;height:1.75000em;vertical-align:-0.50000em"/>이다. 전체 정확성을 보이려면 종료성도 필요하다.</p>
+<p><strong>Collatz <code>3n+1</code></strong>은 모든 양의 정수에서 종료하는지 미해결이다. 기출은 유한성을 겨냥하지만 “어떤 입력은 반드시 무한 반복한다”가 증명된 것은 아니다. 강의의 <code>3n−1</code> 예와 섞지 않는다.</p>
+<p>코드 답안은 의사코드로 채점한다. 문법 장식보다 <strong>종료값·상태·반복 범위·부작용 복구</strong>를 확인한다. 한 예제 통과는 정확성 증명이 아니다.</p>
+</div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="coin"><h2>COINFLIP · 짝홀성은 가능 여부, 거리는 최소 횟수</h2><p class="source"><span class="source-reference">Lec.00 pp. 22–30 (배포본 미포함)</span> · <a href="index.html#lec00/coinflip">학습실·모션 ↗</a></p><div class="qbody"><p>인접한 두 동전을 같이 뒤집으면 T 개수는 −2·0·+2만큼 변한다. <strong>T 개수의 parity(짝홀성)는 불변</strong>이다. 모두 H인 목표는 T가 0개이므로 처음 T가 홀수이면 불가능, 짝수이면 가능하다.</p>
+<p>최소 횟수는 왼쪽부터 T 두 개씩 짝지어 <strong>위치 차이의 합</strong>이다. <code>THHT</code>는 위치 0과 3 → <strong>3회</strong>. <code>THHT → HTHT → HHTT → HHHH</code>. T가 2개라는 이유로 1회라고 쓰지 않는다.</p>
+<p>반환 −1은 불가능, 0은 이미 목표이다. <strong>시간 <img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/>, 추가 공간 <img alt="O(1)" class="math-inline" data-math="4a137b861e8d266f3c1b" src="assets/cram-math/4a137b861e8d266f3c1b.svg" style="width:2.06250em;height:1.00000em;vertical-align:-0.25000em"/></strong>.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def coinflip2(coins):
+    unmatched = -1
+    total = 0
+    for i, state in enumerate(coins):
+        if state == "T":
+            if unmatched == -1:
+                unmatched = i
+            else:
+                total += i - unmatched
+                unmatched = -1
+    return -1 if unmatched != -1 else total</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article></section><section class="cram-chapter" id="ch1"><p class="eyebrow">LEC.01</p><h2 class="chapter-title">복잡도와 구간 문제</h2><article class="cram-card" id="complexity"><h2>Big-O와 P/NP · 무엇을 세는지 먼저 쓴다</h2><p class="source"><span class="source-reference">Lec.01 pp. 8–12 (배포본 미포함)</span> · <a href="index.html#lec01/complexity">학습실·모션 ↗</a></p><div class="qbody"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>답에 쓸 핵심</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>O / Ω / Θ</td>
+<td>각각 점근 상한 / 하한 / 같은 차수의 양쪽 경계</td>
+</tr>
+<tr>
+<td>최악·평균·최선</td>
+<td>어느 입력에 대해 비용을 세는가. O 자체가 “최악”은 아니다</td>
+</tr>
+<tr>
+<td>P</td>
+<td>다항 시간에 <strong>푸는</strong> 결정 문제</td>
+</tr>
+<tr>
+<td>NP</td>
+<td>받은 증거를 다항 시간에 <strong>검증하는</strong> 결정 문제. <img alt="P\subseteq NP" class="math-inline" data-math="db7bc583264b62953a37" src="assets/cram-math/db7bc583264b62953a37.svg" style="width:3.31250em;height:0.87500em;vertical-align:-0.18750em"/>, <img alt="P=NP" class="math-inline" data-math="31398d00ac3ed0eed3cb" src="assets/cram-math/31398d00ac3ed0eed3cb.svg" style="width:3.31250em;height:0.68750em;vertical-align:-0.00000em"/>는 미해결</td>
+</tr>
+<tr>
+<td>NP-hard / NP-complete</td>
+<td>모든 NP 문제에서 다항 시간 환원이 가능 / 그중 NP에도 속함</td>
+</tr>
+</tbody>
+</table>
+<p>성장 순서: <strong><img alt="1&lt;\log n&lt;n&lt;n\log n&lt;n^2&lt;2^n&lt;n!" class="math-inline" data-math="d9af74965db877201c82" src="assets/cram-math/d9af74965db877201c82.svg" style="width:16.12500em;height:1.18750em;vertical-align:-0.25000em"/></strong>. <code>n←n/2</code> 반복은 <img alt="\Theta (\log  n)" class="math-inline" data-math="f07bf847e89172f072bb" src="assets/cram-math/f07bf847e89172f072bb.svg" style="width:3.62500em;height:1.00000em;vertical-align:-0.25000em"/>, 삼각 반복 <img alt="\sum_{i=0}^{n-1}i" class="math-inline" data-math="5200271629e1b64db941" src="assets/cram-math/5200271629e1b64db941.svg" style="width:2.00000em;height:3.06250em;vertical-align:-1.18750em"/>는 <img alt="\Theta (n^{2})" class="math-inline" data-math="c470268916b40cce1e0c" src="assets/cram-math/c470268916b40cce1e0c.svg" style="width:2.68750em;height:1.18750em;vertical-align:-0.25000em"/>. 중첩 반복이라고 항상 <img alt="\Theta (n^{2})" class="math-inline" data-math="c470268916b40cce1e0c" src="assets/cram-math/c470268916b40cce1e0c.svg" style="width:2.68750em;height:1.18750em;vertical-align:-0.25000em"/>는 아니다. 스택에서 각 항목을 한 번 넣고 빼면 총 <img alt="O(n)" class="math-inline" data-math="387008096a415eb2a5c9" src="assets/cram-math/387008096a415eb2a5c9.svg" style="width:2.18750em;height:1.00000em;vertical-align:-0.25000em"/>이다.</p>
+<p>배열·캐시뿐 아니라 <strong>재귀 스택</strong>도 추가 공간이다. 비교 정렬의 최악 하한은 <img alt="\Omega (n \log  n)" class="math-inline" data-math="e32c15db2e1df1241609" src="assets/cram-math/e32c15db2e1df1241609.svg" style="width:4.18750em;height:1.00000em;vertical-align:-0.25000em"/>; 단순 Quicksort의 최악은 <img alt="\Theta (n^{2})" class="math-inline" data-math="c470268916b40cce1e0c" src="assets/cram-math/c470268916b40cce1e0c.svg" style="width:2.68750em;height:1.18750em;vertical-align:-0.25000em"/>, 무작위 피벗의 기대 시간은 <img alt="O(n \log  n)" class="math-inline" data-math="74328c53386ce342cdae" src="assets/cram-math/74328c53386ce342cdae.svg" style="width:4.18750em;height:1.00000em;vertical-align:-0.25000em"/>이다. <code>(n−C)!</code>와 <code>n!</code>는 고정 C&gt;0이어도 같은 Θ로 바꾸지 않는다.</p>
+</div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="ranges"><h2>FESTIVAL · 누적합 규약을 섞지 않는다</h2><p class="source"><span class="source-reference">Lec.01 pp. 13–31 (배포본 미포함)</span> · <a href="index.html#lec01/festival">학습실·모션 ↗</a></p><div class="qbody"><p>길이 <strong>L 이상</strong>인 연속 구간의 <strong>평균 최솟값</strong>이다. 정확히 L일 또는 합의 최솟값이 아니다. 아래는 <code>P[0] = 0</code>이고 <strong>[i,j)</strong> 구간을 사용한다.</p>
+<table>
+<thead>
+<tr>
+<th>누적합 규약</th>
+<th>구간 합</th>
+<th>길이</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>앞에 0: P[t]=A[0:t]의 합</td>
+<td>[i,j)의 합 = P[j]−P[i]</td>
+<td>j−i</td>
+</tr>
+<tr>
+<td>강의·과제: 마지막에 0, psum[−1]=0</td>
+<td>[i,j]의 합 = psum[j]−psum[i−1]</td>
+<td>j−i+1</td>
+</tr>
+</tbody>
+</table>
+<p><code>[3,1,2,3,1,2], L=3</code>에서 <code>[1, 2, 3, 1]</code>의 평균은 <strong>7/4=1.75</strong>. 3일만 보면 놓친다. <strong><img alt="O(N^{3})" class="math-inline" data-math="d5c04bc04915f441275d" src="assets/cram-math/d5c04bc04915f441275d.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/> 재합산 → <img alt="O(N^{2})" class="math-inline" data-math="6a3c40d2fa7e5174d1f1" src="assets/cram-math/6a3c40d2fa7e5174d1f1.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/> 누적 갱신/누적합</strong>; 구간 수 자체는 여전히 <img alt="O(N^{2})" class="math-inline" data-math="6a3c40d2fa7e5174d1f1" src="assets/cram-math/6a3c40d2fa7e5174d1f1.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/>이다. 아래 구현 추가 공간 <img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/>.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def festival(cost, L):
+    n = len(cost)  # 1 &lt;= L &lt;= n
+    P = [0] * (n + 1)
+    for i in range(n):
+        P[i + 1] = P[i] + cost[i]
+    best = float("inf")
+    for i in range(n - L + 1):
+        for j in range(i + L, n + 1):
+            best = min(best, (P[j] - P[i]) / (j - i))
+    return best</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="maxsum"><h2>MAXSUM · 빈 구간 허용 여부가 초기값을 바꾼다</h2><p class="source"><span class="source-reference">Lec.01 pp. 32–44 (배포본 미포함)</span> · <a href="index.html#lec01/maxsum">학습실·모션 ↗</a></p><div class="qbody"><p><code>cur</code>는 현재 원소에서 <strong>끝나는 비어 있지 않은 구간</strong>의 최대합이다. 새로 시작하는 <code>x</code>와 앞 구간을 잇는 <code>cur + x</code>를 비교한다. <code>best = 0</code>이면 전체 답에는 빈 구간을 허용한다.</p>
+<p><code>[-5,−2,−7]</code> → <strong>강의 규약은 0</strong>, 비어 있지 않아야 한다면 −2이다. 그 경우 <code>best</code>를 −∞ 또는 첫 원소로 시작한다.</p>
+<p><strong>완전탐색 <img alt="O(N^{3})" class="math-inline" data-math="d5c04bc04915f441275d" src="assets/cram-math/d5c04bc04915f441275d.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/> → 누적합 <img alt="O(N^{2})" class="math-inline" data-math="6a3c40d2fa7e5174d1f1" src="assets/cram-math/6a3c40d2fa7e5174d1f1.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/> → 분할정복 <img alt="O(N \log  N)" class="math-inline" data-math="53ecfece96f66606a73b" src="assets/cram-math/53ecfece96f66606a73b.svg" style="width:4.62500em;height:1.00000em;vertical-align:-0.25000em"/> → Kadane <img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/></strong>. 분할정복은 왼쪽·오른쪽·중앙을 가로지르는 최대합의 세 경우이다. 아래 추가 공간 <img alt="O(1)" class="math-inline" data-math="4a137b861e8d266f3c1b" src="assets/cram-math/4a137b861e8d266f3c1b.svg" style="width:2.06250em;height:1.00000em;vertical-align:-0.25000em"/>.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def maxsum(A):
+    cur = best = 0
+    for x in A:
+        cur = max(cur, 0) + x
+        best = max(best, cur)
+    return best</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article></section><section class="cram-chapter" id="ch2"><p class="eyebrow">LEC.02</p><h2 class="chapter-title">완전탐색과 상태 공간</h2><article class="cram-card" id="recursion"><h2>재귀 조합 · 선택을 바꿨으면 복구한다</h2><p class="source"><span class="source-reference">Lec.02 pp. 2–14 (배포본 미포함)</span> · <a href="index.html#lec02/recursion">학습실·모션 ↗</a></p><div class="qbody"><p>재귀는 <strong>종료 조건 → 다음 선택 → 상태 변경 → 재귀 → 복구</strong> 순서다. 아래 코드는 <strong>0..n−1</strong> 중 r개를 고른다. 다음 후보는 <code>i + 1</code>부터 시작하므로 순서만 다른 중복이 없다. 선택한 개수가 r이면 <strong>복사본</strong>을 저장한다.</p>
+<p>순열은 순서가 다르면 다른 답이고, 조합은 같은 집합이면 같은 답이다. 답을 전부 출력하는 비용도 센다: 조합 출력은 대략 <img alt="O(r\cdot C(n,r))" class="math-inline" data-math="efc5f21ce5f3c664436b" src="assets/cram-math/efc5f21ce5f3c664436b.svg" style="width:5.68750em;height:1.00000em;vertical-align:-0.25000em"/>, 스택·현재 선택은 <img alt="O(r)" class="math-inline" data-math="9653abd03124a149b1bf" src="assets/cram-math/9653abd03124a149b1bf.svg" style="width:2.00000em;height:1.00000em;vertical-align:-0.25000em"/>, 저장한 결과는 별도다.</p>
+<p>인자에서 리스트를 공유하면 <code>append</code> 뒤 <code>pop</code>이 필요하다. <code>chosen + [i]</code>로 새 리스트를 넘기는 방식은 복구 대신 복사 비용을 지불한다.</p>
+<p>같은 재귀 원리의 예: <strong>Hanoi</strong>는 n−1개 이동→가장 큰 원판→n−1개 이동이라 이동 횟수 <strong><img alt="2^n-1" class="math-inline" data-math="78c46b57174e6ff4445a" src="assets/cram-math/78c46b57174e6ff4445a.svg" style="width:2.75000em;height:0.75000em;vertical-align:-0.00000em"/></strong>, 호출 스택 <img alt="O(n)" class="math-inline" data-math="387008096a415eb2a5c9" src="assets/cram-math/387008096a415eb2a5c9.svg" style="width:2.18750em;height:1.00000em;vertical-align:-0.25000em"/>이다. <strong>행렬곱</strong>은 <code>C[i][j] += A[i][k] * B[k][j]</code>이고 k가 끝나면 다음 j, j가 끝나면 다음 i로 간다. 반복을 재귀로 바꾸어도 <img alt="N\times K\times M" class="math-inline" data-math="ae52b844545e50f1c6b6" src="assets/cram-math/ae52b844545e50f1c6b6.svg" style="width:5.00000em;height:0.68750em;vertical-align:-0.00000em"/>개의 곱셈이라는 일의 양은 줄지 않는다.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def combinations(n, r):
+    out, chosen = [], []
+    def search(start):
+        if len(chosen) == r:
+            out.append(chosen[:])  # 복사해 보관
+            return
+        for i in range(start, n):
+            chosen.append(i)
+            search(i + 1)
+            chosen.pop()  # 다른 가지를 위한 복구
+    search(0)
+    return out</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="sst"><h2>CLOCKSYNC · 리프·전체 호출·깊이는 서로 다르다</h2><p class="source"><span class="source-reference">Lec.02 pp. 15–26 (배포본 미포함)</span> · <a href="index.html#lec02/clocksync">학습실·모션 ↗</a></p><div class="qbody"><p><strong>출제 예고:</strong> SST 크기 계산. 루트 깊이 0, 스위치 d개, 스위치당 0·1·2·3회인 <strong>4분기 완전 트리</strong>를 센다.</p>
+<table>
+<thead>
+<tr>
+<th>물어보는 값</th>
+<th>일반식</th>
+<th>d=10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>리프 수</td>
+<td><img alt="4^{d}" class="math-inline" data-math="6cb41b4f5ccd67763cb7" src="assets/cram-math/6cb41b4f5ccd67763cb7.svg" style="width:1.00000em;height:0.93750em;vertical-align:-0.00000em"/></td>
+<td><img alt="4^{10}" class="math-inline" data-math="4231ab2982a61919ffa1" src="assets/cram-math/4231ab2982a61919ffa1.svg" style="width:1.31250em;height:0.93750em;vertical-align:-0.00000em"/> = 1,048,576</td>
+</tr>
+<tr>
+<td>전체 노드·함수 호출 수</td>
+<td><img alt="\sum_{k=0}^{d}4^k=\frac{4^{d+1}-1}{3}" class="math-inline" data-math="ca0cbe9c7a4d5493eb85" src="assets/cram-math/ca0cbe9c7a4d5493eb85.svg" style="width:6.50000em;height:3.18750em;vertical-align:-1.25000em"/></td>
+<td>1,398,101</td>
+</tr>
+<tr>
+<td>최대 깊이 / 동시에 쌓인 호출 수</td>
+<td>d / d+1</td>
+<td>10 / 11</td>
+</tr>
+</tbody>
+</table>
+<p>가지치기 없는 기본 DFS의 수이며 개선 풀이의 탐색량과 섞지 않는다. 아래 <code>linked[s]</code>는 문제에서 제공한 <strong>s번 스위치와 연결된 시계 인덱스 목록</strong>이다. 입력 시간을 <code>(hour // 3) % 4</code>로 바꾸면 12시는 0이다.</p>
+<p><code>search(s)</code>는 s 이후 스위치로 맞추는 최소 추가 누름 수이다. <strong>재귀를 먼저, push를 나중에</strong> 하므로 cnt = 0도 조사한다. 루프가 끝나면 push가 4회 실행되어 입력 시계가 복구된다. 시간 <img alt="O(4^{d})" class="math-inline" data-math="923f0298395eabe3fc04" src="assets/cram-math/923f0298395eabe3fc04.svg" style="width:2.50000em;height:1.18750em;vertical-align:-0.25000em"/>, 스택 <img alt="O(d)" class="math-inline" data-math="08eab5cd7b88276cab54" src="assets/cram-math/08eab5cd7b88276cab54.svg" style="width:2.06250em;height:1.00000em;vertical-align:-0.25000em"/>; 시계·연결 개수를 고정 상수로 본다.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def clocksync(clocks, linked):
+    INF = float("inf")
+    def push(s):
+        for c in linked[s]:
+            clocks[c] = (clocks[c] + 1) % 4
+    def search(s):
+        if s == 10:
+            return 0 if not any(clocks) else INF
+        best = INF
+        for cnt in range(4):
+            best = min(best, cnt + search(s + 1))
+            push(s)
+        return best
+    answer = search(0)
+    return -1 if answer == INF else answer</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="dependency"><h2>CLOCKSYNC 개선 · 의존 순서대로 강제한다</h2><p class="source"><span class="source-reference">Lec.02 pp. 27–38 (배포본 미포함)</span> · <a href="index.html#lec02/clock-dependency">학습실·모션 ↗</a></p><div class="qbody"><p>시계 8에는 스위치 4만 영향을 준다. 현재 값이 2면 스위치 4는 <strong>(−2)%4=2회</strong>로 결정된다. 시계 11→스위치 1, 시계 13→스위치 9도 먼저 결정할 수 있다.</p>
+<p><strong>현재 시계 상태로 횟수 결정 → 연결된 모든 시계에 반영 → 다음 결정</strong>을 반복한다. 처음 값으로 모든 횟수를 한꺼번에 계산하지 않는다. 아래 순서는 이 강의 연결 표에만 유효하다. 마지막 전체 검사를 해야 모순을 거른다.</p>
+<p>처음 세 스위치만 고정하고 나머지를 탐색하면 리프는 <strong><img alt="4^{7}" class="math-inline" data-math="27cc96886cb4ac7b3412" src="assets/cram-math/27cc96886cb4ac7b3412.svg" style="width:1.00000em;height:0.93750em;vertical-align:-0.00000em"/></strong>이다. 개선 설명을 “시험 제외”로 해석하지 않는다.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def determined(clocks, linked):
+    sequence = [(8, 4), (11, 1), (13, 9), (6, 3), (10, 2),
+                (7, 7), (4, 8), (1, 0), (3, 6), (0, 5)]
+    total = 0
+    for clock, switch in sequence:
+        count = (-clocks[clock]) % 4
+        for other in linked[switch]:
+            clocks[other] = (clocks[other] + count) % 4
+        total += count
+    return -1 if any(clocks) else total</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="cover"><h2>BOARDCOVER · 첫 빈칸 하나만 잡는다</h2><p class="source"><span class="source-reference">Lec.02 pp. 39–53 (배포본 미포함)</span> · <a href="index.html#lec02/boardcover">학습실·모션 ↗</a></p><div class="qbody"><p>0은 빈칸, 1은 막힘/이미 채움. L자 3칸 조각으로 덮는다. <strong>빈칸 수가 3의 배수</strong>가 아니면 답은 0이지만, 배수라는 조건만으로 배치가 존재하지는 않는다.</p>
+<p>가장 위·왼쪽의 첫 빈칸을 고정하고 그 칸을 덮는 <strong>네 모양</strong>만 시도한다. 아무 빈칸이나 다음 대상으로 고르면 같은 배치를 다른 순서로 중복 센다. <strong>빈칸 없음의 반환은 1</strong>: 완성된 배치 한 가지다.</p>
+<p>아래는 배치 전에 세 칸을 모두 검사하여 성공한 배치만 변경·복구한다. 강의의 <code>place(+1)</code>은 실패해도 일부 칸이 변할 수 있으므로 <strong>그 버전에서는 성공 여부와 무관하게 <code>place(−1)</code>을 호출</strong>한다. 두 구현 규칙을 섞지 않는다. E개 빈칸에 대해 가지 수 상한 <img alt="4^{E/3}" class="math-inline" data-math="79afca07c9e1460085d2" src="assets/cram-math/79afca07c9e1460085d2.svg" style="width:1.87500em;height:1.00000em;vertical-align:-0.00000em"/>, 각 호출에서 빈칸 찾기 <img alt="O(HW)" class="math-inline" data-math="72ddc66f2b7f39fda7f1" src="assets/cram-math/72ddc66f2b7f39fda7f1.svg" style="width:3.37500em;height:1.00000em;vertical-align:-0.25000em"/>가 든다.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">SHAPES = [((0, 0), (1, 0), (0, 1)), ((0, 0), (0, 1), (1, 1)),
+          ((0, 0), (1, 0), (1, 1)), ((0, 0), (1, 0), (1, -1))]
+
+def cover(board):  # 0: 빈칸, 1: 막힘/이미 채움
+    H, W = len(board), len(board[0])
+    pos = next(((y, x) for y in range(H) for x in range(W)
+                if board[y][x] == 0), None)
+    if pos is None:
+        return 1  # 완성된 배치 한 가지
+    y, x = pos
+    total = 0
+    for shape in SHAPES:
+        cells = [(y + dy, x + dx) for dy, dx in shape]
+        if all(0 &lt;= a &lt; H and 0 &lt;= b &lt; W and board[a][b] == 0
+               for a, b in cells):
+            for a, b in cells: board[a][b] = 1
+            total += cover(board)
+            for a, b in cells: board[a][b] = 0
+    return total</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="word"><h2>BOGGLE · 위치만으로는 상태가 부족하다</h2><p class="source"><span class="source-reference">Lec.02 pp. 55–58 (배포본 미포함)</span> · <a href="index.html#lec02/boggle">학습실·모션 ↗</a></p><div class="qbody"><p>상태는 <strong>(y,x,k)</strong>: 그 칸에서 <code>word[k:]</code>를 만들 수 있는가. 범위 밖/글자 불일치 → False, 마지막 글자 일치 → True, 나머지는 <strong>8방향 + k+1</strong>이다.</p>
+<p>이 수업 규칙에서는 <strong>칸 재방문이 가능</strong>하다. 이웃 A,B로 ABA를 찾을 수 있다. 같은 칸에서 이동 없이 두 글자를 읽을 수는 없다. 따라서 <code>(dy, dx) = (0, 0)</code>을 빼며, visited로 재방문을 막지 않는다.</p>
+<p>길이 L, H×W 보드의 단순 DFS 상한 <img alt="O(HW\cdot 8^{L})" class="math-inline" data-math="48aa1ac8283db72b88f5" src="assets/cram-math/48aa1ac8283db72b88f5.svg" style="width:5.12500em;height:1.18750em;vertical-align:-0.25000em"/>, 스택 <img alt="O(L)" class="math-inline" data-math="637eefcaaa8af5fafdc4" src="assets/cram-math/637eefcaaa8af5fafdc4.svg" style="width:2.25000em;height:1.00000em;vertical-align:-0.25000em"/>. 메모를 쓴다면 키에도 k가 있어야 한다. 추가 실습 권장이라는 말은 시험 제외가 아니다.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def boggle(board, word):  # word는 비어 있지 않음
+    H, W = len(board), len(board[0])
+    def has(y, x, k):
+        if not (0 &lt;= y &lt; H and 0 &lt;= x &lt; W): return False
+        if board[y][x] != word[k]: return False
+        if k == len(word) - 1: return True
+        return any(has(y + dy, x + dx, k + 1)
+                   for dy in (-1, 0, 1) for dx in (-1, 0, 1)
+                   if dy != 0 or dx != 0)
+    return any(has(y, x, 0) for y in range(H) for x in range(W))</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article></section><section class="cram-chapter" id="ch3"><p class="eyebrow">LEC.03</p><h2 class="chapter-title">분할정복과 재귀식</h2><article class="cram-card" id="divide"><h2>분할정복 · 같은 부분문제를 두 번 부르지 않는다</h2><p class="source"><span class="source-reference">Lec.03 pp. 2–13 (배포본 미포함)</span> · <a href="index.html#lec03/divide">학습실·모션 ↗</a></p><div class="qbody"><p>빠른 합 <img alt="S(n)=1+\cdots+n" class="math-inline" data-math="c8405ecc923b50ff4fb3" src="assets/cram-math/c8405ecc923b50ff4fb3.svg" style="width:7.56250em;height:1.00000em;vertical-align:-0.25000em"/>에서 홀수는 <img alt="S(n-1)+n" class="math-inline" data-math="63d2607a4ace3c244c32" src="assets/cram-math/63d2607a4ace3c244c32.svg" style="width:5.50000em;height:1.00000em;vertical-align:-0.25000em"/>, 짝수는 <img alt="2S(n/2)+(n/2)^2" class="math-inline" data-math="ceccd38f33a21f0c708e" src="assets/cram-math/ceccd38f33a21f0c708e.svg" style="width:7.50000em;height:1.18750em;vertical-align:-0.25000em"/>이다. 거듭제곱은 절반 지수를 <strong>한 번만 계산해 저장</strong>한 뒤 제곱한다.</p>
+<p><code>power(A, m // 2)</code>를 두 번 호출하면 <strong><img alt="2T(m/2)+O(1)=\Theta(m)" class="math-inline" data-math="b1389c869a14d483ec1a" src="assets/cram-math/b1389c869a14d483ec1a.svg" style="width:10.56250em;height:1.00000em;vertical-align:-0.25000em"/></strong>, 한 번만 호출하면 <strong><img alt="T(m/2)+O(1)=\Theta(\log m)" class="math-inline" data-math="124fdb238aae5410fb24" src="assets/cram-math/124fdb238aae5410fb24.svg" style="width:11.56250em;height:1.00000em;vertical-align:-0.25000em"/></strong>이다. 고정 크기 행렬 곱을 상수 비용으로 본 설명이며 임의 차원 행렬 곱 비용은 별도다.</p>
+<p>아래 <code>multiply</code>는 곱셈 함수, <code>identity</code>는 항등원(스칼라 1 또는 항등행렬)이다. <strong>지수 0의 답은 항등원</strong>. 시간·스택 <img alt="O(\log  m)" class="math-inline" data-math="8acb4d09fd06af8c2d81" src="assets/cram-math/8acb4d09fd06af8c2d81.svg" style="width:3.87500em;height:1.00000em;vertical-align:-0.25000em"/>.</p>
+<h3>빠른 합</h3><pre tabindex="0"><code class="language-python">def fast_sum(n):  # n &gt;= 1
+    if n == 1: return 1
+    if n % 2: return fast_sum(n - 1) + n
+    return 2 * fast_sum(n // 2) + n * n // 4</code></pre><h3>반환값을 저장하는 거듭제곱</h3><pre tabindex="0"><code class="language-python">def power(A, m, multiply, identity):
+    if m == 0: return identity
+    if m % 2: return multiply(power(A, m - 1, multiply, identity), A)
+    half = power(A, m // 2, multiply, identity)
+    return multiply(half, half)</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="master"><h2>Master Theorem · 코드 → a,b,k → 차수</h2><p class="source"><span class="source-reference">Lec.03 pp. 14–16 (배포본 미포함)</span> · <a href="index.html#lec03/master">학습실·모션 ↗</a></p><div class="qbody"><p><strong>출제 방식 안내:</strong> 코드가 주어질 수 있다. <img alt="T(n)=aT\!\left(\frac{n}{b}\right)+\Theta(n^k)" class="math-inline" data-math="764ee6c353acc477e1c9" src="assets/cram-math/764ee6c353acc477e1c9.svg" style="width:9.31250em;height:1.68750em;vertical-align:-0.56250em"/>에서 <strong>a=재귀 호출 수</strong>, <strong>b=입력 축소 비율</strong>, <strong>k=재귀 밖 작업의 지수</strong>이다. 로그 밑 b와 호출 수 a를 바꾸지 않는다.</p>
+<table>
+<thead>
+<tr>
+<th>비교</th>
+<th>타이트한 차수</th>
+<th>예</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="a&gt;b^k" class="math-inline" data-math="038ce7422d99175bd989" src="assets/cram-math/038ce7422d99175bd989.svg" style="width:2.75000em;height:1.00000em;vertical-align:-0.06250em"/></td>
+<td><img alt="\Theta\!\left(n^{\log_b a}\right)" class="math-inline" data-math="ea27a8a4b641e92b1a3a" src="assets/cram-math/ea27a8a4b641e92b1a3a.svg" style="width:3.75000em;height:1.00000em;vertical-align:-0.06250em"/></td>
+<td><img alt="7T(n/2)+\Theta(n^2)" class="math-inline" data-math="a57f47d7ad17cd2ff60f" src="assets/cram-math/a57f47d7ad17cd2ff60f.svg" style="width:7.31250em;height:1.18750em;vertical-align:-0.25000em"/> → <img alt="\Theta\!\left(n^{\log_2 7}\right)" class="math-inline" data-math="cf0788adc0d54f0d8eed" src="assets/cram-math/cf0788adc0d54f0d8eed.svg" style="width:3.81250em;height:1.00000em;vertical-align:-0.06250em"/></td>
+</tr>
+<tr>
+<td><img alt="a=b^k" class="math-inline" data-math="4bccd818a2f62c9591e4" src="assets/cram-math/4bccd818a2f62c9591e4.svg" style="width:2.75000em;height:1.00000em;vertical-align:-0.06250em"/></td>
+<td><img alt="\Theta(n^k\log n)" class="math-inline" data-math="1c589f4e24d5231b2b08" src="assets/cram-math/1c589f4e24d5231b2b08.svg" style="width:4.75000em;height:1.18750em;vertical-align:-0.25000em"/></td>
+<td><img alt="2T(n/2)+\Theta(n)" class="math-inline" data-math="d9fd2c99d8aae438e620" src="assets/cram-math/d9fd2c99d8aae438e620.svg" style="width:6.81250em;height:1.00000em;vertical-align:-0.25000em"/> → <img alt="\Theta (n \log  n)" class="math-inline" data-math="5c0fa389159b92f39c2a" src="assets/cram-math/5c0fa389159b92f39c2a.svg" style="width:4.25000em;height:1.00000em;vertical-align:-0.25000em"/></td>
+</tr>
+<tr>
+<td><img alt="a&lt;b^k" class="math-inline" data-math="2f4de52bf322bf055ec7" src="assets/cram-math/2f4de52bf322bf055ec7.svg" style="width:2.75000em;height:1.00000em;vertical-align:-0.06250em"/></td>
+<td><img alt="\Theta (n^{k})" class="math-inline" data-math="2e56b9dc20f1736a8555" src="assets/cram-math/2e56b9dc20f1736a8555.svg" style="width:2.68750em;height:1.18750em;vertical-align:-0.25000em"/></td>
+<td><img alt="3T(n/2)+\Theta(n^2)" class="math-inline" data-math="67e7ea922e5735148396" src="assets/cram-math/67e7ea922e5735148396.svg" style="width:7.31250em;height:1.18750em;vertical-align:-0.25000em"/> → <img alt="\Theta (n^{2})" class="math-inline" data-math="c470268916b40cce1e0c" src="assets/cram-math/c470268916b40cce1e0c.svg" style="width:2.68750em;height:1.18750em;vertical-align:-0.25000em"/></td>
+</tr>
+</tbody>
+</table>
+<p>재귀 호출 <strong>2번</strong>, 크기 <strong>n/2</strong>, 바깥 반복 <strong>n회</strong>이면 a = 2, b = 2, k = 1이다. 별도 <img alt="T(n-1)" class="math-inline" data-math="04bf248aa6adbd04b12b" src="assets/cram-math/04bf248aa6adbd04b12b.svg" style="width:3.68750em;height:1.00000em;vertical-align:-0.25000em"/>이나 서로 다른 부분문제 크기에는 이 표를 기계적으로 대입하지 않는다. O를 물으면 위 Θ를 O로 써도 되지만 타이트한 차수를 고른다.</p>
+<p><strong>가벼운 가짜 동전 하나가 있다는 조건</strong>에서는 저울 결과가 세 갈래라 최악 <img alt="\lceil\log_3 n\rceil" class="math-inline" data-math="a01bd39e8690ab7a2ca0" src="assets/cram-math/a01bd39e8690ab7a2ca0.svg" style="width:3.43750em;height:1.00000em;vertical-align:-0.25000em"/>회로 후보를 좁힌다(8개는 3·3·2로 나눠 2회). 무거운지 가벼운지도 모르는 다른 문제에는 이 식을 그대로 쓰지 않는다.</p>
+</div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="quad"><h2>QUADTREE 뒤집기 · 읽는 순서와 붙이는 순서는 다르다</h2><p class="source"><span class="source-reference">Lec.03 pp. 17–37 (배포본 미포함)</span> · <span class="source-reference">Lec.03 pp. 38–42 (배포본 미포함)</span> · <a href="index.html#lec03/quad-flip">학습실·모션 ↗</a></p><div class="qbody"><p><strong>출제 예고는 상하 뒤집기</strong>에 있다. <code>b / w</code>는 단색 잎, <code>x</code> 뒤는 <strong>상좌 q1 → 상우 q2 → 하좌 q3 → 하우 q4</strong> 네 자식이다. 한 자식 자체가 긴 트리일 수 있어 문자열을 같은 길이로 4등분하면 안 된다.</p>
+<p>네 자식을 <strong>원래 순서로 재귀적으로 읽고</strong>, 반환은 <strong><code>"x" + q3 + q4 + q1 + q2</code></strong>이다. 재귀가 각 자식 내부도 이미 뒤집는다. 부모의 자리만 바꾸면 불완전한 반전이다. iterator 또는 읽기 인덱스는 자식 네 호출이 공유한다.</p>
+<p><code>xbwwb</code> → <code>xwbbw</code> → 다시 뒤집으면 <code>xbwwb</code>. n은 이미지 한 변이 아니라 여기서는 <strong>인코딩 길이</strong>. <strong>강의의 노드 방문 분석은 <img alt="O(n)" class="math-inline" data-math="387008096a415eb2a5c9" src="assets/cram-math/387008096a415eb2a5c9.svg" style="width:2.18750em;height:1.00000em;vertical-align:-0.25000em"/></strong>이다. Python 문자열을 새로 복사하는 비용까지 세면 높이 h에 대해 <img alt="O(nh)" class="math-inline" data-math="41fa57c6e2eaa0f22e85" src="assets/cram-math/41fa57c6e2eaa0f22e85.svg" style="width:2.75000em;height:1.00000em;vertical-align:-0.25000em"/>, 균형 트리는 <img alt="O(n \log  n)" class="math-inline" data-math="74328c53386ce342cdae" src="assets/cram-math/74328c53386ce342cdae.svg" style="width:4.18750em;height:1.00000em;vertical-align:-0.25000em"/>, 매우 치우치면 <img alt="O(n^{2})" class="math-inline" data-math="ae115efd39aded13f0ae" src="assets/cram-math/ae115efd39aded13f0ae.svg" style="width:2.68750em;height:1.18750em;vertical-align:-0.25000em"/>까지 고려한다. 이미지의 픽셀을 채우는 디코딩 비용과 구분한다.</p>
+<p>인코딩·디코딩은 표현 이해를 위한 구현 권고다. <strong>그 두 구현 자체가 직접 출제 확정이라는 뜻은 아니다.</strong> 자세한 구현은 학습실 링크에서 확인한다.</p>
+<figure><a href="assets/quad.svg" rel="noopener" target="_blank"><img alt="QUADTREE 뒤집기 · 읽는 순서와 붙이는 순서는 다르다 — 학습 도식" loading="lazy" src="assets/quad.svg"/></a><figcaption>학습용 도식 · 눌러 확대</figcaption></figure><h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def flip(encoded):
+    tokens = iter(encoded)
+    def read():
+        head = next(tokens)
+        if head in "bw": return head
+        q1, q2, q3, q4 = read(), read(), read(), read()
+        return "x" + q3 + q4 + q1 + q2
+    return read()</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="fence"><h2>FENCE · 중앙 걸침과 스택 너비를 구분한다</h2><p class="source"><span class="source-reference">Lec.03 pp. 43–55 (배포본 미포함)</span> · <span class="source-reference">Lec.03 pp. 56–65 (배포본 미포함)</span> · <a href="index.html#lec03/fence-stack">학습실·모션 ↗</a></p><div class="qbody"><p>답은 <strong>왼쪽 내부 / 오른쪽 내부 / 중앙을 가로지름</strong> 중 최대이다. 재귀 구간이 [left,right]이면 오른쪽은 <strong>mid+1</strong>부터. 중앙 걸침은 <code>[mid, mid + 1]</code>에서 시작해 더 높은 쪽으로 늘리며 <strong>최소 높이 × (high−low+1)</strong>를 갱신한다. 시간 <img alt="O(N \log  N)" class="math-inline" data-math="53ecfece96f66606a73b" src="assets/cram-math/53ecfece96f66606a73b.svg" style="width:4.62500em;height:1.00000em;vertical-align:-0.25000em"/>, 스택 <img alt="O(\log  N)" class="math-inline" data-math="9d40b4cfbd1f54c4486c" src="assets/cram-math/9d40b4cfbd1f54c4486c.svg" style="width:3.81250em;height:1.00000em;vertical-align:-0.25000em"/>.</p>
+<p>단조 스택은 높이가 비감소하도록 인덱스를 보관한다. 더 낮은 판자 i를 만나 j를 pop한 <strong>뒤의</strong> 왼쪽 경계를 쓴다. 스택이 비면 너비 i, 아니면 <strong>i−stack[−1]−1</strong>. 양쪽 경계는 포함하지 않는다.</p>
+<p>끝에 0 높이를 추가하면 남은 판자도 처리된다. 각 판자는 한 번 들어가고 나와 <strong>시간 <img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/>, 공간 <img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/></strong>. 예: i=7, pop 뒤 왼쪽 경계=2, 높이=3이면 너비4·넓이12.</p>
+<h3>분할정복의 경계 확장</h3><pre tabindex="0"><code class="language-python">def fence(h, left, right):
+    if left == right: return h[left]
+    mid = (left + right) // 2
+    best = max(fence(h, left, mid), fence(h, mid + 1, right))
+    lo, hi = mid, mid + 1
+    height = min(h[lo], h[hi])
+    best = max(best, height * 2)
+    while left &lt; lo or hi &lt; right:
+        if hi &lt; right and (lo == left or h[lo - 1] &lt; h[hi + 1]):
+            hi += 1
+            height = min(height, h[hi])
+        else:
+            lo -= 1
+            height = min(height, h[lo])
+        best = max(best, height * (hi - lo + 1))
+    return best</code></pre><h3>스위핑·단조 스택</h3><pre tabindex="0"><code class="language-python">def fence_stack(heights):
+    h = heights + [0]  # 끝에서 남은 판자를 모두 처리
+    stack, best = [], 0
+    for i in range(len(h)):
+        while stack and h[stack[-1]] &gt;= h[i]:
+            j = stack.pop()
+            width = i if not stack else i - stack[-1] - 1
+            best = max(best, h[j] * width)
+        stack.append(i)
+    return best</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article></section><section class="cram-chapter" id="ch4"><p class="eyebrow">LEC.04</p><h2 class="chapter-title">동적계획법의 기본</h2><article class="cram-card" id="dp"><h2>DP · 상태가 같으면 미래의 답도 같아야 한다</h2><p class="source"><span class="source-reference">Lec.04 pp. 2–10 (배포본 미포함)</span> · <a href="index.html#lec04/dp-basics">학습실·모션 ↗</a></p><div class="qbody"><p><strong>Optimal substructure(최적 부분구조)</strong>는 최적해가 부분문제의 최적해를 이용해 구성되는 성질, <strong>Overlapping subproblems(중복 부분문제)</strong>는 같은 부분문제를 여러 번 푸는 성질이다. 두 용어를 바꾸지 않는다.</p>
+<p><strong>상태의 뜻 → 점화식 → 기저 → 계산 순서 → 반환값</strong> 순서로 읽는다. Memoization은 필요한 상태를 재귀+캐시로 구하고, Tabulation은 의존하는 상태부터 표를 채운다. 비용은 <strong>상태 수 × 한 상태의 전이 비용</strong>으로 센다.</p>
+<p>이항계수 <img alt="C(n,k)=C(n-1,k-1)+C(n-1,k)" class="math-inline" data-math="f2719e77eb9e6517a64b" src="assets/cram-math/f2719e77eb9e6517a64b.svg" style="width:16.68750em;height:1.00000em;vertical-align:-0.25000em"/>, <img alt="C(n,0)=C(n,n)=1" class="math-inline" data-math="06f00e77751589cdc2fc" src="assets/cram-math/06f00e77751589cdc2fc.svg" style="width:9.12500em;height:1.00000em;vertical-align:-0.25000em"/>. 한 행으로 압축하면 j를 <strong>큰 쪽에서 작은 쪽으로</strong> 갱신해야 이전 행 값을 읽는다.</p>
+<p>캐시의 −1은 미계산 표시이다. 답으로 0이 나올 수 있으면 0을 미계산으로 사용하지 않는다. 강의 지침에 맞춰 아래 요약 코드는 직접 표/딕셔너리를 사용한다. <code>@cache</code>만 붙이면 상태 설계나 메모리 문제가 해결되는 것은 아니다.</p>
+<p>제약 조건 때문에 충분한 상태를 저장하기 어렵다면, 조건을 일찍 검사해 후보를 줄이는 <strong>Backtracking(백트래킹)</strong>이 적절할 수 있다. “제약이 있으면 무조건 DP 불가”는 아니다. 알파메틱처럼 문자↔숫자가 <strong>일대일 대응</strong>이면 사용한 숫자·선행 0 금지·각 식의 조건을 함께 관리한다.</p>
+<h3>한 행 이항계수</h3><pre tabindex="0"><code class="language-python">def choose(n, k):  # 0 &lt;= k &lt;= n
+    dp = [1] + [0] * k
+    for i in range(1, n + 1):
+        for j in range(min(i, k), 0, -1):
+            dp[j] += dp[j - 1]
+    return dp[k]</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="triangle"><h2>TRIANGLEPATH · 최댓값, 경로, 경로 수</h2><p class="source"><span class="source-reference">Lec.04 pp. 11–30 (배포본 미포함)</span> · <span class="source-reference">Lec.05 pp. 2–10 (배포본 미포함)</span> · <a href="index.html#lec05/reconstruct">학습실·모션 ↗</a></p><div class="qbody"><p><code>D[y][x]</code>는 (y,x)에서 마지막 행까지 갈 수 있는 최대 합. <strong><img alt="T_{y,x}+\max(D_{y+1,x},D_{y+1,x+1})" class="math-inline" data-math="ec0f34375b6899020f99" src="assets/cram-math/ec0f34375b6899020f99.svg" style="width:13.50000em;height:1.06250em;vertical-align:-0.31250em"/></strong>이며 마지막 행이 기저다. 한 행 DP는 <strong>아래→위, x는 왼쪽→오른쪽</strong>으로 갱신한다. 오른쪽부터 하면 필요한 아래 행 값이 사라진다.</p>
+<p>경로 복원은 값만 계산한 뒤 아무 곳이나 고르는 것이 아니라 <strong>최적 자식의 위치를 기록/재계산</strong>한다. 아래 복원 코드는 동률이면 오른쪽을 택한다. 동률에서 <strong>경로 수</strong>를 물으면 한쪽만 택하지 말고 양쪽 개수를 더한다. 값 계산 <img alt="O(N^{2})" class="math-inline" data-math="6a3c40d2fa7e5174d1f1" src="assets/cram-math/6a3c40d2fa7e5174d1f1.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/>, 한 행 추가 공간 <img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/>; 선택 기록은 <img alt="O(N^{2})" class="math-inline" data-math="6a3c40d2fa7e5174d1f1" src="assets/cram-math/6a3c40d2fa7e5174d1f1.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/>.</p>
+<p>학습 예제 <code>[4] / [2, 2] / [1, 3, 1] / [2, 1, 1, 2]</code>의 최대 합은 <strong>10</strong>, 그 합을 만드는 경로는 <strong>4개</strong>. 같은 숫자열이어도 경로 위치가 다르면 따로 세는 조건이다.</p>
+<figure><a href="assets/cram-triangle.svg" rel="noopener" target="_blank"><img alt="TRIANGLEPATH · 최댓값, 경로, 경로 수 — 학습 도식" loading="lazy" src="assets/cram-triangle.svg"/></a><figcaption>학습용 도식 · 눌러 확대</figcaption></figure><h3>최대 합만 계산</h3><pre tabindex="0"><code class="language-python">def trianglepath(T):
+    dp = T[-1][:]
+    for y in range(len(T) - 2, -1, -1):
+        for x in range(y + 1):
+            dp[x] = T[y][x] + max(dp[x], dp[x + 1])
+    return dp[0]</code></pre><h3>선택 위치로 실제 경로 복원</h3><pre tabindex="0"><code class="language-python">def triangle_solution(T):
+    n = len(T)
+    dp = T[-1][:]
+    path = [[0] * (i + 1) for i in range(n)]
+    for y in range(n - 2, -1, -1):
+        for x in range(y + 1):
+            down, right = dp[x], dp[x + 1]
+            path[y][x] = -1 if down &gt; right else 1 if down &lt; right else 0
+            dp[x] = T[y][x] + max(down, right)
+    x, route = 0, []
+    for y in range(n):
+        route.append(T[y][x])
+        if y &lt; n - 1 and path[y][x] &gt;= 0: x += 1
+    return dp[0], route</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="tiling"><h2>TILING2 · 타일 종류와 기저를 먼저 확인한다</h2><p class="source"><span class="source-reference">Lec.04 pp. 31–45 (배포본 미포함)</span> · <a href="index.html#lec04/tiling">학습실·모션 ↗</a></p><div class="qbody"><p>2×n 판을 <strong>1×2 도미노만</strong>으로 채우면 <img alt="F_n=F_{n-1}+F_{n-2}" class="math-inline" data-math="fa32a0490179c26315cc" src="assets/cram-math/fa32a0490179c26315cc.svg" style="width:8.06250em;height:0.87500em;vertical-align:-0.18750em"/>. 빈 판을 한 가지로 세는 확장 정의는 <strong><img alt="F_0=F_1=1" class="math-inline" data-math="902d73fd35e9ae75d0d0" src="assets/cram-math/902d73fd35e9ae75d0d0.svg" style="width:5.00000em;height:0.87500em;vertical-align:-0.18750em"/></strong>이며 답은 Fibonacci의 n+1번째와 같다.</p>
+<p>2×2 정사각형 타일까지 추가하면 <strong><img alt="G_n=G_{n-1}+2G_{n-2}" class="math-inline" data-math="838b8bf7d5cdf895b51e" src="assets/cram-math/838b8bf7d5cdf895b51e.svg" style="width:9.00000em;height:0.93750em;vertical-align:-0.18750em"/></strong>, <img alt="G_0=G_1=1" class="math-inline" data-math="18d59a9f91dd8d13d292" src="assets/cram-math/18d59a9f91dd8d13d292.svg" style="width:5.25000em;height:0.93750em;vertical-align:-0.18750em"/>, <img alt="G_2=3" class="math-inline" data-math="f9518ed565cd75435efe" src="assets/cram-math/f9518ed565cd75435efe.svg" style="width:2.87500em;height:0.93750em;vertical-align:-0.18750em"/>이다. 도미노만 있을 때의 점화식을 그대로 쓰지 않는다. n=3이면 기본3가지 / 추가타일5가지다.</p>
+<p>기본 재귀는 지수 시간, 메모·표는 <img alt="O(n)" class="math-inline" data-math="387008096a415eb2a5c9" src="assets/cram-math/387008096a415eb2a5c9.svg" style="width:2.18750em;height:1.00000em;vertical-align:-0.25000em"/>, 두 변수는 <strong>시간 <img alt="O(n)" class="math-inline" data-math="387008096a415eb2a5c9" src="assets/cram-math/387008096a415eb2a5c9.svg" style="width:2.18750em;height:1.00000em;vertical-align:-0.25000em"/>·추가 공간 <img alt="O(1)" class="math-inline" data-math="4a137b861e8d266f3c1b" src="assets/cram-math/4a137b861e8d266f3c1b.svg" style="width:2.06250em;height:1.00000em;vertical-align:-0.25000em"/></strong>이다.</p>
+<p><code>a, b = b, (a + b) % MOD</code>는 오른쪽의 <strong>갱신 전 값</strong>으로 동시에 계산한다.</p>
+<p>아래 반복 구현은 F(0)=1. 과제의 행렬 버전은 n≥1에서 같고, n=0 반환 규약은 다르다. 행렬 <code>M = [[1, 1], [1, 0]]</code>의 n제곱에서 [0][0]을 읽으면 F(n). 빠른 제곱 시간 <img alt="O(\log  n)" class="math-inline" data-math="75efbd0aba9bc25ea8af" src="assets/cram-math/75efbd0aba9bc25ea8af.svg" style="width:3.62500em;height:1.00000em;vertical-align:-0.25000em"/>, 재귀 스택 <img alt="O(\log  n)" class="math-inline" data-math="75efbd0aba9bc25ea8af" src="assets/cram-math/75efbd0aba9bc25ea8af.svg" style="width:3.62500em;height:1.00000em;vertical-align:-0.25000em"/>.</p>
+<p><strong>모듈러는 정수 크기를 제한한다.</strong> 이미 큰 a,b를 갖고 <code>(a % M + b % M) % M</code>를 한 번 하는 것이 무조건 더 빠르다는 뜻이 아니다. 매 단계 저장값을 M 미만으로 유지해 이후 큰 정수 연산 비용이 커지지 않게 하는 것이 핵심이다.</p>
+<h3>도미노만 허용한 상수 공간 DP</h3><pre tabindex="0"><code class="language-python">def tiling(n, MOD = 1000000007):
+    a, b = 1, 1  # F(0), F(1)
+    for _ in range(2, n + 1):
+        a, b = b, (a + b) % MOD
+    return 1 if n == 0 else b</code></pre><h3>과제와 연결되는 행렬 거듭제곱</h3><pre tabindex="0"><code class="language-python">def tiling_matrix(n, mod = 1000000007):
+    def mul(A, B):
+        return [[sum(A[i][k] * B[k][j] for k in range(2)) % mod
+                 for j in range(2)] for i in range(2)]
+    result = [[1, 0], [0, 1]]
+    base = [[1, 1], [1, 0]]
+    while n:
+        if n % 2:
+            result = mul(result, base)
+        base = mul(base, base)
+        n //= 2
+    return result[0][0]</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="poly"><h2>POLY · 첫 행을 알아야 연결 수가 정해진다</h2><p class="source"><span class="source-reference">Lec.04 pp. 46–59 (배포본 미포함)</span> · <a href="index.html#lec04/poly">학습실·모션 ↗</a></p><div class="qbody"><p><code>P(n, first)</code>는 n칸짜리 <strong>세로로 단조인 폴리오미노</strong> 중 첫 행이 first칸인 경우의 수다. 모든 임의 폴리오미노를 세는 문제로 확대하지 않는다.</p>
+<p>다음 행 길이가 second이면 붙이는 가로 위치가 <strong>first+second−1</strong>개다. 아래 수식에서 f는 first, s는 second를 줄인 기호다. <img alt="P(n,f)=\sum_{s=1}^{n-f}(f+s-1)P(n-f,s)" class="math-inline" data-math="4a1144b205b22adc7cb7" src="assets/cram-math/4a1144b205b22adc7cb7.svg" style="width:15.00000em;height:3.18750em;vertical-align:-1.18750em"/>. <strong>n == first이면 한 행 하나이므로 1</strong>이다.</p>
+<p>답은 첫 행 길이가 정해지지 않았으므로 <img alt="\sum_{f=1}^{n}P(n,f)" class="math-inline" data-math="427589fcef3a0e3aa5c8" src="assets/cram-math/427589fcef3a0e3aa5c8.svg" style="width:4.56250em;height:3.06250em;vertical-align:-1.37500em"/>. <img alt="P(4,2)=2P(2,1)+3P(2,2)=5" class="math-inline" data-math="3dd90c0871ef672fe757" src="assets/cram-math/3dd90c0871ef672fe757.svg" style="width:13.75000em;height:1.00000em;vertical-align:-0.25000em"/>, 전체 <img alt="P(4)=19" class="math-inline" data-math="4f7388294c507eb94f63" src="assets/cram-math/4f7388294c507eb94f63.svg" style="width:4.12500em;height:1.00000em;vertical-align:-0.25000em"/>. 상태 <img alt="O(N^{2})" class="math-inline" data-math="6a3c40d2fa7e5174d1f1" src="assets/cram-math/6a3c40d2fa7e5174d1f1.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/>, 전이 <img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/> → <strong>시간 <img alt="O(N^{3})" class="math-inline" data-math="d5c04bc04915f441275d" src="assets/cram-math/d5c04bc04915f441275d.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/>, 공간 <img alt="O(N^{2})" class="math-inline" data-math="6a3c40d2fa7e5174d1f1" src="assets/cram-math/6a3c40d2fa7e5174d1f1.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/></strong>. 과제의 표는 n을 증가시키며 채운다.</p>
+<h3>명시적 캐시로 점화식 구현</h3><pre tabindex="0"><code class="language-python">def count_poly(n, MOD = 10000000):
+    memo = {}
+    def poly(n, first):
+        if n == first: return 1
+        key = (n, first)
+        if key not in memo:
+            memo[key] = sum((first + second - 1) *
+                poly(n - first, second)
+                for second in range(1, n - first + 1)) % MOD
+        return memo[key]
+    return sum(poly(n, f) for f in range(1, n + 1)) % MOD</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="catalan"><h2>Catalan · 두 부분의 크기를 합치면 n−1</h2><p class="source"><span class="source-reference">Lec.04 pp. 60–61 (배포본 미포함)</span> · <a href="index.html#lec04/catalan">학습실·모션 ↗</a></p><div class="qbody"><p>기저는 <strong><img alt="C_0=1" class="math-inline" data-math="40f86f3dd797a4473b1f" src="assets/cram-math/40f86f3dd797a4473b1f.svg" style="width:2.81250em;height:0.93750em;vertical-align:-0.18750em"/></strong>, 점화식은 <strong><img alt="C_n=\sum_{i=0}^{n-1}C_iC_{n-1-i}" class="math-inline" data-math="44fcdf381acca984c6da" src="assets/cram-math/44fcdf381acca984c6da.svg" style="width:8.43750em;height:3.06250em;vertical-align:-1.18750em"/></strong>이다. 뿌리 하나를 뺀 n−1개를 왼쪽 i개·오른쪽 n−1−i개로 나눈다. 곱은 두 선택을 조합, 합은 모든 나누기를 모은다.</p>
+<p><code>1,1,2,5,14,42,…</code>. 모양 개수를 구할 때 <img alt="C_0" class="math-inline" data-math="a20db09b4ab0b0ba99d6" src="assets/cram-math/a20db09b4ab0b0ba99d6.svg" style="width:1.12500em;height:0.93750em;vertical-align:-0.18750em"/>을 0으로 두면 한쪽이 빈 경우가 모두 사라진다. <strong>시간 <img alt="O(n^{2})" class="math-inline" data-math="ae115efd39aded13f0ae" src="assets/cram-math/ae115efd39aded13f0ae.svg" style="width:2.68750em;height:1.18750em;vertical-align:-0.25000em"/>, 추가 공간 <img alt="O(n)" class="math-inline" data-math="387008096a415eb2a5c9" src="assets/cram-math/387008096a415eb2a5c9.svg" style="width:2.18750em;height:1.00000em;vertical-align:-0.25000em"/></strong>. 식의 오른쪽에 n−i를 쓰거나 합 범위에서 n−1을 빼먹지 않는다.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def catalan(n, MOD = 1000000007):
+    C = [0] * (n + 1)
+    C[0] = 1
+    for size in range(1, n + 1):
+        for left in range(size):
+            C[size] = (C[size] + C[left] * C[size - 1 - left]) % MOD
+    return C[n]</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article></section><section class="cram-chapter" id="ch5"><p class="eyebrow">LEC.05</p><h2 class="chapter-title">최적해 복원과 순번</h2><article class="cram-card" id="packing"><h2>PACKING · 최적값과 선택한 물건을 함께 복원한다</h2><p class="source"><span class="source-reference">Lec.05 pp. 11–23 (배포본 미포함)</span> · <span class="source-reference">Lec.05 pp. 24–30 (배포본 미포함)</span> · <a href="index.html#lec05/packing-cost">학습실·모션 ↗</a></p><div class="qbody"><p><strong>Fractional</strong>은 물건을 쪼갤 수 있어 가치/무게 비율순 탐욕이 성립한다. <strong>0-1</strong>은 통째로 넣거나 빼므로 그 탐욕이 일반적으로 성립하지 않는다.</p>
+<p><code>B(i, c)</code>는 <strong>i번부터, 남은 용량 c</strong>에서 얻는 최대 가치. skip=<img alt="B(i+1,c)" class="math-inline" data-math="be85a3540e88cf5a74b9" src="assets/cram-math/be85a3540e88cf5a74b9.svg" style="width:4.50000em;height:1.00000em;vertical-align:-0.25000em"/>, take=<img alt="p_i+B(i+1,c-w_i)" class="math-inline" data-math="f4461567ea70b9da7d85" src="assets/cram-math/f4461567ea70b9da7d85.svg" style="width:8.68750em;height:1.00000em;vertical-align:-0.25000em"/>이며 <strong>w[i]≤c인 경우에만 take</strong>한다. 같은 i라도 c가 다르면 다른 상태다.</p>
+<p>복원 시 <img alt="B(i,c)=B(i+1,c)" class="math-inline" data-math="a4af7858787eb470db12" src="assets/cram-math/a4af7858787eb470db12.svg" style="width:8.43750em;height:1.00000em;vertical-align:-0.25000em"/>이면 이 구현은 동률에서 건너뛴다. 그 외에는 물건 i를 기록하고 <strong>c −= w[i], i += 1</strong>로 이동한다. 최적값만 맞아도 선택 목록을 복원한 것은 아니다.</p>
+<p>시간·캐시 <img alt="O(NW)" class="math-inline" data-math="5edaed787ccb05f1c600" src="assets/cram-math/5edaed787ccb05f1c600.svg" style="width:3.31250em;height:1.00000em;vertical-align:-0.25000em"/>, 스택 <img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/>. W는 숫자 값이므로 입력 비트 길이 기준으로는 <strong>pseudo-polynomial(의사다항)</strong>이다. 1행 0-1 배낭은 용량을 <strong>큰 쪽→작은 쪽</strong>으로 갱신해야 같은 물건을 중복 사용하지 않는다.</p>
+<h3>직접 캐시와 동률 skip 복원</h3><pre tabindex="0"><code class="language-python">def packing(w, p, W):
+    n, memo = len(w), {}
+    def best(i, c):
+        if i == n: return 0
+        key = (i, c)
+        if key not in memo:
+            value = best(i + 1, c)
+            if w[i] &lt;= c:
+                value = max(value, p[i] + best(i + 1, c - w[i]))
+            memo[key] = value
+        return memo[key]
+    chosen, c = [], W
+    for i in range(n):
+        if best(i, c) != best(i + 1, c):
+            chosen.append(i)
+            c -= w[i]
+    return best(0, W), chosen</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="lis"><h2>LIS · 시작하는 길이와 끝나는 길이를 섞지 않는다</h2><p class="source"><span class="source-reference">Lec.05 pp. 31–41 (배포본 미포함)</span> · <span class="source-reference">Lec.05 pp. 42–45 (배포본 미포함)</span> · <a href="index.html#lec05/lis-fast">학습실·모션 ↗</a></p><div class="qbody"><p><strong>엄격한 증가</strong>이므로 비교는 <code>&lt;</code>이다. 다음 두 표는 방향이 다르지만 전체 최적값은 같다.</p>
+<table>
+<thead>
+<tr>
+<th>상태</th>
+<th>후보 j</th>
+<th>계산 순서</th>
+<th>[1,3,2,4]의 표</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="L_{i}" class="math-inline" data-math="a62bd1a7b00e1a471059" src="assets/cram-math/a62bd1a7b00e1a471059.svg" style="width:1.00000em;height:0.87500em;vertical-align:-0.18750em"/>: <img alt="S_{i}" class="math-inline" data-math="0ec3c929264c89d7aa93" src="assets/cram-math/0ec3c929264c89d7aa93.svg" style="width:0.93750em;height:0.93750em;vertical-align:-0.18750em"/>에서 시작</td>
+<td>j&gt;i, <img alt="S_{i}" class="math-inline" data-math="0ec3c929264c89d7aa93" src="assets/cram-math/0ec3c929264c89d7aa93.svg" style="width:0.93750em;height:0.93750em;vertical-align:-0.18750em"/>&lt;<img alt="S_{j}" class="math-inline" data-math="f276bc16970867f58fa3" src="assets/cram-math/f276bc16970867f58fa3.svg" style="width:1.00000em;height:1.06250em;vertical-align:-0.31250em"/></td>
+<td>i 감소</td>
+<td>[3,2,2,1]</td>
+</tr>
+<tr>
+<td>dp[i]: <img alt="S_{i}" class="math-inline" data-math="0ec3c929264c89d7aa93" src="assets/cram-math/0ec3c929264c89d7aa93.svg" style="width:0.93750em;height:0.93750em;vertical-align:-0.18750em"/>에서 끝남(실행 과제)</td>
+<td>j&lt;i, <img alt="S_{j}" class="math-inline" data-math="f276bc16970867f58fa3" src="assets/cram-math/f276bc16970867f58fa3.svg" style="width:1.00000em;height:1.06250em;vertical-align:-0.31250em"/>&lt;<img alt="S_{i}" class="math-inline" data-math="0ec3c929264c89d7aa93" src="assets/cram-math/0ec3c929264c89d7aa93.svg" style="width:0.93750em;height:0.93750em;vertical-align:-0.18750em"/></td>
+<td>i 증가</td>
+<td>[1,2,2,3]</td>
+</tr>
+</tbody>
+</table>
+<p><code>choices[i]</code>는 길이가 아니라 <strong>다음 원소의 인덱스</strong>, −1이면 종료. 시작형은 최댓값 인덱스부터 따라간다. <strong><img alt="O(N^{2})" class="math-inline" data-math="6a3c40d2fa7e5174d1f1" src="assets/cram-math/6a3c40d2fa7e5174d1f1.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/> 시간·<img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/> 공간</strong>이다.</p>
+<p>빠른 <code>tails[k]</code>는 길이 k+1 증가 부분수열의 <strong>가능한 최소 끝값</strong>. <code>bisect_left</code>로 첫 ≥x 자리를 교체하며 시간 <img alt="O(N \log  N)" class="math-inline" data-math="53ecfece96f66606a73b" src="assets/cram-math/53ecfece96f66606a73b.svg" style="width:4.62500em;height:1.00000em;vertical-align:-0.25000em"/>. tails가 최종 LIS 자체라고 단정하지 않는다. <code>[3, 5, 7, 8, 1]</code>에서 tails=[1,5,7,8]은 인덱스 순서상 실제 부분수열이 아니다. 실제 해는 predecessor 등이 더 필요하다.</p>
+<h3>길이와 choices 복원</h3><pre tabindex="0"><code class="language-python">def lis_solution(S):
+    n = len(S)
+    if n == 0: return 0, []
+    L, choices = [1] * n, [-1] * n
+    for i in range(n - 1, -1, -1):
+        for j in range(i + 1, n):
+            if S[i] &lt; S[j] and L[i] &lt; L[j] + 1:
+                L[i], choices[i] = L[j] + 1, j
+    start = max(range(n), key = lambda i:L[i])
+    length, route = L[start], []
+    while start != -1:
+        route.append(S[start])
+        start = choices[start]
+    return length, route</code></pre><h3>tails로 길이만 구하기</h3><pre tabindex="0"><code class="language-python">from bisect import bisect_left
+def lis_length(S):
+    tails = []
+    for x in S:
+        k = bisect_left(tails, x)  # 처음으로 x 이상인 위치
+        if k == len(tails): tails.append(x)
+        else: tails[k] = x
+    return len(tails)</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="klis"><h2>KLIS · 길이 → 개수 → 값순 묶음 건너뛰기</h2><p class="source"><span class="source-reference">Lec.05 pp. 46–61 (배포본 미포함)</span> · <a href="index.html#lec05/klis">학습실·모션 ↗</a></p><div class="qbody"><p>서로 다른 원소, 유효한 1-based k가 전제다. <strong><img alt="L_{i}" class="math-inline" data-math="a62bd1a7b00e1a471059" src="assets/cram-math/a62bd1a7b00e1a471059.svg" style="width:1.00000em;height:0.87500em;vertical-align:-0.18750em"/></strong>는 그 위치에서 시작하는 최장 길이, <strong><img alt="C_{i}" class="math-inline" data-math="eb6f11d59e4fbd349061" src="assets/cram-math/eb6f11d59e4fbd349061.svg" style="width:1.06250em;height:0.93750em;vertical-align:-0.18750em"/></strong>는 그 길이를 만드는 수열 수이다. 끝나는 곳은 <img alt="L_{i}" class="math-inline" data-math="a62bd1a7b00e1a471059" src="assets/cram-math/a62bd1a7b00e1a471059.svg" style="width:1.00000em;height:0.87500em;vertical-align:-0.18750em"/>=1, <img alt="C_{i}" class="math-inline" data-math="eb6f11d59e4fbd349061" src="assets/cram-math/eb6f11d59e4fbd349061.svg" style="width:1.06250em;height:0.93750em;vertical-align:-0.18750em"/>=1.</p>
+<p>다음 후보는 <strong>j&gt;i, <img alt="A_{i}" class="math-inline" data-math="34b2eb62a09c0d692433" src="assets/cram-math/34b2eb62a09c0d692433.svg" style="width:1.06250em;height:0.93750em;vertical-align:-0.18750em"/>&lt;<img alt="A_{j}" class="math-inline" data-math="70833983ac93307e9f3e" src="assets/cram-math/70833983ac93307e9f3e.svg" style="width:1.12500em;height:1.06250em;vertical-align:-0.31250em"/>, <img alt="L_{i}" class="math-inline" data-math="a62bd1a7b00e1a471059" src="assets/cram-math/a62bd1a7b00e1a471059.svg" style="width:1.00000em;height:0.87500em;vertical-align:-0.18750em"/>==<img alt="L_{j}" class="math-inline" data-math="bed03924bce216025547" src="assets/cram-math/bed03924bce216025547.svg" style="width:1.06250em;height:1.00000em;vertical-align:-0.31250em"/>+1</strong>을 모두 만족해야 한다. 앞의 두 조건만 쓰면 최장이 아닌 증가 부분수열도 세게 된다.</p>
+<p>후보를 <strong>값 오름차순</strong>으로 정렬하고 <strong>skip = k−1</strong>을 둔다. <img alt="C_{j}" class="math-inline" data-math="685ea8e600a7a7e1a80d" src="assets/cram-math/685ea8e600a7a7e1a80d.svg" style="width:1.06250em;height:1.06250em;vertical-align:-0.31250em"/>≤skip이면 그 묶음을 넘기며 <code>skip−=C[j]</code>. 아니면 그 분기로 간다. 길이가 최대인 시작점 수를 세는 것이 LIS 개수는 아니다.</p>
+<p>가상 −∞의 길이 1은 결과에서 뺀다. 아래 구현은 정확한 Python 정수를 쓴다. 개수를 포화시킨다면 <strong><img alt="\mathrm{CAP}\geq k" class="math-inline" data-math="7d5ea4a7c1ca7146460d" src="assets/cram-math/7d5ea4a7c1ca7146460d.svg" style="width:3.87500em;height:0.93750em;vertical-align:-0.18750em"/></strong>여야 한다. 과제 <img alt="\mathrm{CAP}=2^{31}" class="math-inline" data-math="70cdcbc47f961cafb23e" src="assets/cram-math/70cdcbc47f961cafb23e.svg" style="width:4.68750em;height:1.00000em;vertical-align:-0.06250em"/>과 PDF의 2,000,000,001은 다르며, 후자를 큰 k에 그대로 쓰면 틀릴 수 있다.</p>
+<p>길이·개수 DP <img alt="O(N^{2})" class="math-inline" data-math="6a3c40d2fa7e5174d1f1" src="assets/cram-math/6a3c40d2fa7e5174d1f1.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/>, 아래 매 단계 후보 정렬 복원은 안전 상한 <img alt="O(N^{2} \log  N)" class="math-inline" data-math="abdacfd60fac12c01056" src="assets/cram-math/abdacfd60fac12c01056.svg" style="width:5.18750em;height:1.18750em;vertical-align:-0.25000em"/>. <code>[5, 1, 6, 4, 3, 2, 8, 7]</code>의 최장 길이3·전체10개·6번째는 <strong>[1,4,8]</strong>이다.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def kth_lis(S, k):  # 서로 다른 값, 유효한 1-based k
+    A = [float("-inf")] + S  # 가상 시작점
+    n = len(A)
+    L, C = [1] * n, [1] * n
+    for i in range(n - 1, -1, -1):
+        followers = [j for j in range(i + 1, n) if A[i] &lt; A[j]]
+        if followers:
+            L[i] = 1 + max(L[j] for j in followers)
+            C[i] = sum(C[j] for j in followers if L[i] == L[j] + 1)
+    if not 1 &lt;= k &lt;= C[0]: raise ValueError("k 범위")
+    i, skip, answer = 0, k - 1, []
+    while L[i] &gt; 1:
+        followers = sorted((A[j], j) for j in range(i + 1, n)
+                           if A[i] &lt; A[j] and L[i] == L[j] + 1)
+        for value, j in followers:
+            if C[j] &lt;= skip: skip -= C[j]
+            else:
+                answer.append(value)
+                i = j
+                break
+    return answer</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article></section><section class="cram-chapter" id="ch6"><p class="eyebrow">LEC.06</p><h2 class="chapter-title">탐욕법과 최소 신장 트리</h2><article class="cram-card" id="greedy"><h2>Greedy · 지금의 선택을 안전하게 확정할 수 있는가</h2><p class="source"><span class="source-reference">Lec.06 pp. 2–7 (배포본 미포함)</span> · <span class="source-reference">Lec.06 pp. 8–18 (배포본 미포함)</span> · <a href="index.html#lec06/matchorder">학습실·모션 ↗</a></p><div class="qbody"><p><strong>Greedy choice property(탐욕적 선택 속성)</strong>는 현재 선택을 포함하는 최적해가 적어도 하나 있다는 성질이다. 최적 부분구조만 있다고 아무 국소 선택이나 해도 되는 것은 아니다. <strong>Exchange argument(교환 논증)</strong>는 최적해의 선택을 탐욕 선택으로 바꿔도 나빠지지 않음을 보인다.</p>
+<p>MATCHORDER는 <strong>상대 이상(≥)</strong> 레이팅이면 이긴다. 이길 수 있으면 이기는 선수 중 가장 약한 선수를 쓰고, 모두 못 이기면 가장 약한 선수를 버린다. 이분 탐색은 <code>bisect_left</code>이다.</p>
+<p>Python 정렬 리스트에서 pop은 이동 <img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/>이므로 아래 총시간은 <strong><img alt="O(N^{2})" class="math-inline" data-math="6a3c40d2fa7e5174d1f1" src="assets/cram-math/6a3c40d2fa7e5174d1f1.svg" style="width:2.93750em;height:1.18750em;vertical-align:-0.25000em"/></strong>, 정렬·탐색만 보고 <img alt="O(N \log  N)" class="math-inline" data-math="53ecfece96f66606a73b" src="assets/cram-math/53ecfece96f66606a73b.svg" style="width:4.62500em;height:1.00000em;vertical-align:-0.25000em"/>이라고 쓰지 않는다. 입력 리스트를 변경하는 구현인지도 확인한다.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">from bisect import bisect_left
+def matchorder(russian, korean):
+    left = sorted(korean)
+    wins = 0
+    for rating in russian:
+        if left[-1] &lt; rating:
+            left.pop(0)
+        else:
+            wins += 1
+            left.pop(bisect_left(left, rating))
+    return wins</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="merge"><h2>STRJOIN · 작은 두 개를 합친 비용을 누적한다</h2><p class="source"><span class="source-reference">Lec.06 pp. 19–31 (배포본 미포함)</span> · <a href="index.html#lec06/strjoin">학습실·모션 ↗</a></p><div class="qbody"><p>두 문자열을 합칠 때 비용이 길이의 합이다. 현재 가장 짧은 두 개 a,b를 꺼내 <strong>a+b를 총비용에 더하고</strong>, 합친 길이를 다시 넣는다. 마지막 문자열의 길이만 반환하면 틀린다.</p>
+<p><code>[2, 3, 6, 8]</code>: 2+3=5, 5+6=11, 8+11=19 → 총비용 <strong>35</strong>. 카드 묶음 응용도 비교 비용을 A+B로 정한 문제에서는 같은 모델이다.</p>
+<p>Min-heap으로 <strong>시간 <img alt="O(N \log  N)" class="math-inline" data-math="53ecfece96f66606a73b" src="assets/cram-math/53ecfece96f66606a73b.svg" style="width:4.62500em;height:1.00000em;vertical-align:-0.25000em"/>, 공간 <img alt="O(N)" class="math-inline" data-math="bad775d58b244e66978c" src="assets/cram-math/bad775d58b244e66978c.svg" style="width:2.37500em;height:1.00000em;vertical-align:-0.25000em"/></strong>. 합치는 횟수는 N−1이다. Huffman의 가중 경로 길이 최소화와 같은 합치기 구조다.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">from heapq import heapify, heappop, heappush
+def strjoin(lengths):
+    q = lengths[:]
+    heapify(q)
+    cost = 0
+    while len(q) &gt; 1:
+        joined = heappop(q) + heappop(q)
+        cost += joined
+        heappush(q, joined)
+    return cost</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="huffman"><h2>Huffman · 트리 생성, 인코딩, 디코딩을 구분한다</h2><p class="source"><span class="source-reference">Lec.06 pp. 32–40 (배포본 미포함)</span> · <span class="source-reference">Lec.06 pp. 41–42 (배포본 미포함)</span> · <a href="index.html#lec06/huffman-code">학습실·모션 ↗</a></p><div class="qbody"><p><strong>출제 예고:</strong> 주어진 문자열↔비트열 두 방향. 재귀 코드의 빈칸과 트리 표현 제공 가능성도 언급됐다. “항상 같은 트리·같은 코드·전위순회가 제공된다”는 뜻은 아니다.</p>
+<p>빈도가 작은 <strong>두 트리</strong>를 꺼내 합을 부모 빈도로 한 새 트리를 넣는다. 문자는 잎에만 있으므로 한 문자의 코드가 다른 코드의 접두어가 되지 않는 <strong>prefix-free code</strong>이다. 문자 m개면 잎 m개, 내부 m−1개, 전체 <strong><img alt="2m-1" class="math-inline" data-math="cbbec88d012641f62ed5" src="assets/cram-math/cbbec88d012641f62ed5.svg" style="width:3.06250em;height:0.75000em;vertical-align:-0.06250em"/>개</strong>. 비용은 <img alt="\sum_c f_c\ell_c" class="math-inline" data-math="fc3aa30ab33395082fbe" src="assets/cram-math/fc3aa30ab33395082fbe.svg" style="width:3.00000em;height:2.18750em;vertical-align:-1.00000em"/>. 수식의 <img alt="f_c" class="math-inline" data-math="c68b67e2e253be8c737d" src="assets/cram-math/c68b67e2e253be8c737d.svg" style="width:0.87500em;height:1.00000em;vertical-align:-0.25000em"/>는 문자 c의 빈도, <img alt="\ell_c" class="math-inline" data-math="e5916cb731c6350f0d6a" src="assets/cram-math/e5916cb731c6350f0d6a.svg" style="width:0.81250em;height:0.93750em;vertical-align:-0.18750em"/>는 그 문자의 코드 길이다.</p>
+<p>트리의 왼쪽0·오른쪽1을 따른다. <strong>동일 빈도에서 좌우/동률 선택 규칙이 다르면 코드 비트는 달라질 수 있지만 최적 비용은 같을 수 있다.</strong> 비트를 물으면 문제에 주어진 트리·규칙을 우선한다. 생성 <img alt="O(m \log  m)" class="math-inline" data-math="00f45412cfdc4199425c" src="assets/cram-math/00f45412cfdc4199425c.svg" style="width:4.75000em;height:1.00000em;vertical-align:-0.25000em"/>.</p>
+<p>강의 트리의 코드표: <strong>a=00, d=01, f=10, c=110, b=1110, e=1111</strong>. <code>da → 0100</code>, <code>001110 → ab</code>. 잎을 읽으면 문자 출력 후 <strong>비트를 더 소비하지 않고 루트 복귀</strong>한다. 불완전한 코드가 남으면 정상 종료가 아니다.</p>
+<p>재귀 디코더 빈칸: 내부에서 한 간선 이동은 <strong>i+1</strong>, 잎에서 루트로 다시 시작은 <strong>같은 i</strong>. 인코더는 왼쪽 code+"0", 오른쪽 code+"1", 잎이면 사전에 저장한다.</p>
+<p>Preorder=루트→왼쪽→오른쪽. <strong>내부/잎 표식 + 내부 노드 자식이 정확히 둘</strong>이라는 조건이 있으면 그 표현을 재귀적으로 복원할 수 있다. 임의의 일반 이진트리가 전위순회만으로 항상 복원되는 것은 아니다.</p>
+<figure><a href="assets/huffman.svg" rel="noopener" target="_blank"><img alt="Huffman · 트리 생성, 인코딩, 디코딩을 구분한다 — 학습 도식" loading="lazy" src="assets/huffman.svg"/></a><figcaption>학습용 도식 · 눌러 확대</figcaption></figure><h3>우선순위 큐로 트리 만들기</h3><pre tabindex="0"><code class="language-python">from heapq import heapify, heappop, heappush
+from itertools import count
+
+class Node:
+    def __init__(self, char, freq, left = None, right = None):
+        self.char, self.freq = char, freq
+        self.left, self.right = left, right
+
+def huffman(pairs):  # 서로 다른 문자, 양의 빈도, 두 문자 이상
+    serial = count()
+    q = [(f, next(serial), Node(c, f)) for c, f in pairs]
+    heapify(q)
+    while len(q) &gt; 1:
+        fa, _, a = heappop(q)
+        fb, _, b = heappop(q)
+        parent = Node(None, fa + fb, a, b)
+        heappush(q, (fa + fb, next(serial), parent))
+    return q[0][2]</code></pre><h3>코드표 생성과 반복 디코더</h3><pre tabindex="0"><code class="language-python">def make_encoder(node, code, encoder):
+    if node.char is not None:
+        encoder[node.char] = code
+    else:
+        make_encoder(node.left, code + "0", encoder)
+        make_encoder(node.right, code + "1", encoder)
+
+def decode(root, bits):
+    node, result = root, []
+    for bit in bits:
+        if bit not in "01": raise ValueError("비트 오류")
+        node = node.left if bit == "0" else node.right
+        if node is None: raise ValueError("트리와 불일치")
+        if node.char is not None:
+            result.append(node.char)
+            node = root
+    if node is not root: raise ValueError("미완성 코드")
+    return "".join(result)</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="prim"><h2>MST·Prim · 경로 합이 아니라 트리에 붙이는 간선 하나</h2><p class="source"><span class="source-reference">Lec.06 pp. 43–58 (배포본 미포함)</span> · <a href="index.html#lec06/prim">학습실·모션 ↗</a></p><div class="qbody"><p>연결 무방향 그래프의 <strong>Minimum Spanning Tree</strong>는 모든 정점을 잇는 최소 비용 트리이며 간선은 V−1개다. 최단 경로 트리와 다르다. Prim은 현재 트리 T에서 밖으로 나가는 간선 중 최소 비용을 고른다.</p>
+<p><strong><img alt="\mathrm{minweight}_v=\min_{u\in T}w(u,v)" class="math-inline" data-math="3f1b010f85c5e41d9aa2" src="assets/cram-math/3f1b010f85c5e41d9aa2.svg" style="width:11.06250em;height:1.50000em;vertical-align:-0.75000em"/></strong>, parent[v]는 그 간선의 T 쪽 끝점이다. 다음 정점은 미방문 중 minweight가 최소인 v. 추가한 u에서 갱신할 때 <strong>w(u,v)</strong>와 비교하며, <code>minweight[u] + w(u, v)</code>를 쓰면 Dijkstra식 경로 합이 된다.</p>
+<p>표를 물으면 <strong>현재 상태의 표인지, 다음 정점 추가 후 표인지</strong> 확인한다. 동률은 주어진 규칙을 따른다. 정점이 같아도 parent가 유일하지 않을 수 있다. 배열 선택은 <img alt="O(V^{2}+E)" class="math-inline" data-math="5734fed1f9826f6466f4" src="assets/cram-math/5734fed1f9826f6466f4.svg" style="width:4.62500em;height:1.18750em;vertical-align:-0.25000em"/>, 단순 그래프에서 <img alt="O(V^{2})" class="math-inline" data-math="06fac4375a5ae6ae8397" src="assets/cram-math/06fac4375a5ae6ae8397.svg" style="width:2.75000em;height:1.18750em;vertical-align:-0.25000em"/>. 아래 사전 인접 목록의 공간은 <img alt="O(V+E)" class="math-inline" data-math="71e90125f0086a5f0280" src="assets/cram-math/71e90125f0086a5f0280.svg" style="width:4.06250em;height:1.00000em;vertical-align:-0.25000em"/>, 추가 배열 <img alt="O(V)" class="math-inline" data-math="1c542e8ddb37fad5486f" src="assets/cram-math/1c542e8ddb37fad5486f.svg" style="width:2.12500em;height:1.00000em;vertical-align:-0.25000em"/>.</p>
+<figure><a href="assets/prim-seven.svg" rel="noopener" target="_blank"><img alt="MST·Prim · 경로 합이 아니라 트리에 붙이는 간선 하나 — 학습 도식" loading="lazy" src="assets/prim-seven.svg"/></a><figcaption>학습용 도식 · 눌러 확대</figcaption></figure><h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">def prim(adj):  # adj[u]: {v: weight}, 연결된 무방향 그래프
+    n = len(adj)
+    added, parent = [False] * n, [-1] * n
+    weight = [float("inf")] * n
+    weight[0] = 0
+    total, edges = 0, []
+    for _ in range(n):
+        u = min((v for v in range(n) if not added[v]), key = lambda v:weight[v])
+        if weight[u] == float("inf"): raise ValueError("연결되지 않음")
+        added[u] = True
+        total += weight[u]
+        if parent[u] != -1: edges.append((parent[u], u))
+        for v, w in adj[u].items():
+            if not added[v] and w &lt; weight[v]:
+                weight[v], parent[v] = w, u
+    return total, edges</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article><article class="cram-card" id="lan"><h2>LAN · 기존 간선 0, 제곱 거리 비교 후 실제 길이 합</h2><p class="source"><span class="source-reference">Lec.06 pp. 59–61 (배포본 미포함)</span> · <a href="index.html#lec06/lan">학습실·모션 ↗</a></p><div class="qbody"><p>좌표는 완전 그래프를 만든다. 새 케이블 비용은 Euclidean distance이다. <strong>기존 케이블은 양방향 비용 0</strong>으로 둔다. 제곱 거리로 간선 크기를 비교해도 순서는 같지만 결과에는 <strong>선택한 각 간선에 sqrt를 취해 더한다</strong>.</p>
+<p><img alt="\sqrt{\sum_e d_e^2}" class="math-inline" data-math="62d2d913930bcd7cf698" src="assets/cram-math/62d2d913930bcd7cf698.svg" style="width:3.62500em;height:2.56250em;vertical-align:-1.00000em"/>와 <img alt="\sum_e\sqrt{d_e^2}" class="math-inline" data-math="a0049b01910c76f5c095" src="assets/cram-math/a0049b01910c76f5c095.svg" style="width:3.50000em;height:2.43750em;vertical-align:-1.00000em"/>는 다르다. 수식의 <img alt="d_e" class="math-inline" data-math="d3b4cd694374cac75df0" src="assets/cram-math/d3b4cd694374cac75df0.svg" style="width:0.93750em;height:0.93750em;vertical-align:-0.18750em"/>는 선택한 간선 e의 실제 길이다. 이미 연결된 간선도 Prim의 선택·방문 진행에 포함하며 추가 비용만 0이다. 과제의 <code>dist = -1</code> 방문 표식 버전에서 후보는 <strong>dist≥0</strong>이어야 0원 간선을 버리지 않는다.</p>
+<p>A=(0,0), B=(3,0), C=(3,4), A–B가 기존 연결이면 새 비용은 B–C의 <strong>4</strong>이다. 거리 행렬을 쓰는 아래 구현은 <strong>시간·공간 <img alt="O(V^{2})" class="math-inline" data-math="06fac4375a5ae6ae8397" src="assets/cram-math/06fac4375a5ae6ae8397.svg" style="width:2.75000em;height:1.18750em;vertical-align:-0.25000em"/></strong>. n≥1을 전제한다.</p>
+<h3>구현 핵심</h3><pre tabindex="0"><code class="language-python">import math
+def lan(points, installed):
+    n = len(points)
+    W = [[(x - a) ** 2 + (y - b) ** 2 for a, b in points] for x, y in points]
+    for u, v in installed: W[u][v] = W[v][u] = 0
+    dist, added = [float("inf")] * n, [False] * n
+    dist[0] = 0
+    total = 0.0
+    for _ in range(n):
+        u = min((v for v in range(n) if not added[v]), key = lambda v:dist[v])
+        total += math.sqrt(dist[u])
+        added[u] = True
+        for v in range(n):
+            if not added[v]: dist[v] = min(dist[v], W[u][v])
+    return total</code></pre></div><a class="back" href="#contents">목차로 ↑</a></article></section><section class="last" id="last"><h2>시험장 들어가기 전 마지막 확인</h2>
+<ul>
+<li>유한성은 종료, 정확성은 원하는 답, 복잡도는 자원이다.</li>
+<li>NP는 빠른 검증이며 P도 포함한다. <img alt="P=NP" class="math-inline" data-math="31398d00ac3ed0eed3cb" src="assets/cram-math/31398d00ac3ed0eed3cb.svg" style="width:3.31250em;height:0.68750em;vertical-align:-0.00000em"/>는 미해결이다.</li>
+<li>누적합의 양끝 포함/끝 제외 규약과 길이 식은 같은 규약을 써야 한다.</li>
+<li>MAXSUM 강의 규약은 빈 구간을 허용해 전부 음수이면 0이다.</li>
+<li>4분기 깊이 d 트리의 리프는 <img alt="4^{d}" class="math-inline" data-math="6cb41b4f5ccd67763cb7" src="assets/cram-math/6cb41b4f5ccd67763cb7.svg" style="width:1.00000em;height:0.93750em;vertical-align:-0.00000em"/>, 전체 노드는 <img alt="\sum_{k=0}^{d}4^k" class="math-inline" data-math="048124f84d4f4ef099ab" src="assets/cram-math/048124f84d4f4ef099ab.svg" style="width:2.50000em;height:3.06250em;vertical-align:-1.18750em"/>, 루트 포함 호출 스택은 d+1이다.</li>
+<li>배치한 공유 상태는 재귀 호출이 끝나면 복구한다.</li>
+<li>Master의 a는 호출 수, b는 입력 축소 비율, <img alt="n^{k}" class="math-inline" data-math="0b69cc1858ea2b708773" src="assets/cram-math/0b69cc1858ea2b708773.svg" style="width:1.18750em;height:1.00000em;vertical-align:-0.06250em"/>는 재귀 밖 비용이다.</li>
+<li>QUADTREE는 자식을 원래 순서로 재귀해 읽고 3→4→1→2로 결합한다.</li>
+<li>이항계수·0-1 배낭은 오른쪽→왼쪽, 아래→위 삼각형 한 행 DP는 왼쪽→오른쪽이다.</li>
+<li>최적값·최적해·최적해 개수·k번째 최적해는 서로 다른 결과다.</li>
+<li>LIS의 시작형/종료형 방향과 strict &lt; 조건을 확인한다. tails 자체는 복원된 LIS가 아니다.</li>
+<li>KLIS는 최장 길이 조건을 통과한 후보만 값순으로 정렬하고 skip=k−1만큼 건너뛴다.</li>
+<li>Huffman의 잎에서 문자를 출력하고 루트로 복귀할 때 새 비트를 소비하지 않는다.</li>
+<li>Prim 갱신은 간선 하나의 비용이며 경로 누적합이 아니다. LAN의 기존 연결은 비용 0이다.</li>
+</ul>
+<p>출제 예고 근거: CLOCKSYNC SST(2차시 44분대), QUADTREE 뒤집기(사용자 청취 확인), Master 코드 제공 방식(3차시 35–39분대), Huffman 인코딩·디코딩/빈칸(6차시 1:01–1:04). Catalan과 CLOCKSYNC 개선 설명을 시험 제외·추가 출제 확정으로 바꾸지 않는다. QUADTREE 인코딩/디코딩은 보충 구현 권고다.</p>
+</section><footer>공지·기존 강의자료 대조·전사 확인 기록·과제17개 및 기출 분석을 바탕으로 작성한 시험 직전 복습용 정리다. 코드/작은 예제는 설명용이며 실제 출제 문제를 보장하지 않는다. <span class="source-reference">출제 예고 근거 (배포본 미포함)</span> · <span class="source-reference">제작·검증 기록 (배포본 미포함)</span></footer></main></body></html>
